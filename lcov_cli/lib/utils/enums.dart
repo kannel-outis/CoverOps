@@ -1,0 +1,4 @@
+enum ParserType {
+  lcov,
+  json,
+}
