@@ -41,45 +41,48 @@ class LcovFileLineParser extends LineParser {
     final lcovGroups = parseLCOV(lcovFile.readAsStringSync());
 
     // Maps each file group to its content lines and creates a FileGroup for further processing
-    final fileGroups = lcovGroups.map((group) {
-      return FileGroup(
-        content: _parseFileContentIntoLines(File('$rootPath/${group.fileName}')),
-        lcovGroup: group,
-      );
-    }).toList();
+    // final fileGroups = lcovGroups.map((group) {
+    //   return FileGroup(
+    //     content: _parseFileContentIntoLines(File('$rootPath/${group.fileName}')),
+    //     lcovGroup: group,
+    //   );
+    // }).toList();
 
     // Holds the resulting list of CodeFile objects
-    final codeFiles = <CodeFile>[];
+    // final codeFiles = <CodeFile>[];
+
+    return lcovGroups.map((lcov)=> CodeFile(path: lcov.fileName, codeLines: lcov.lines)).toList();
 
     // Process each file group and map the coverage data to each line of code
-    for (var group in fileGroups) {
-      final lcovLine = <Line>[];
+    // for (var group in fileGroups) {
+    //   final lcovLine = <Line>[];
 
-      // Create a map of line numbers to their coverage information (hit status and hit count)
-      final coverageMap = {
-        for (var line in group.lcovGroup.lines) line.lineNumber: (line.isLineHit, line.hitCount)
-      };
+    //   // Create a map of line numbers to their coverage information (hit status and hit count)
+    //   final coverageMap = {
+    //     for (var line in group.lcovGroup.lines) line.lineNumber: (line.isLineHit, line.hitCount)
+    //   };
 
-      // Iterate through each line in the file content and populate the coverage data for each line
-      for (var i = 0; i < group.content.length; i++) {
-        final index = i + 1;
+    //   // Iterate through each line in the file content and populate the coverage data for each line
+    //   for (var i = 0; i < group.content.length; i++) {
+    //     final index = i + 1;
 
-        lcovLine.add(
-          Line(
-            lineNumber: index,
-            lineContent: group.content[i],
-            hitCount: coverageMap[index]?.$2 ?? 0,
-            isLineHit: coverageMap[index]?.$1 ?? false,
-            canHitLine: group.lcovGroup.lines.map((line) => line.lineNumber).contains(index),
-          ),
-        );
-      }
+    //     lcovLine.add(
+    //       Line(
+    //         lineNumber: index,
+    //         lineContent: group.content[i],
+    //         hitCount: coverageMap[index]?.$2 ?? 0,
+    //         isLineHit: coverageMap[index]?.$1 ?? false,
+    //         canHitLine: group.lcovGroup.lines.map((line) => line.lineNumber).contains(index),
+    //       ),
+    //     );
+    //   }
 
-      // Add the processed file to the list of CodeFiles
-      codeFiles.add(CodeFile(path: group.lcovGroup.fileName, codeLines: lcovLine));
-    }
+    //   // Add the processed file to the list of CodeFiles
+    //   codeFiles.add(CodeFile(path: group.lcovGroup.fileName, codeLines: lcovLine));
+    // }
 
-    return codeFiles;
+    // return codeFiles;
+    // return 
   }
 
   /// Parses the content of an LCOV file into a list of [LcovGroup] objects.
@@ -171,7 +174,5 @@ class LcovFileLineParser extends LineParser {
   /// [file] - The file to be read.
   /// Returns a list of strings, where each string represents a line in the file.
   /// If the file does not exist, returns an empty list.
-  List<String> _parseFileContentIntoLines(File file) {
-    return file.existsSync() ? file.readAsStringSync().split('\n') : [];
-  }
+  
 }
