@@ -5,7 +5,7 @@ class LcovGroup {
   final int functionsFound;
   final int linesFound;
   final int linesHit;
-  final List<LcovLine> lines;
+  final List<CoverageLine> lines;
 
   LcovGroup({
     required this.fileName,
@@ -31,7 +31,7 @@ class LcovGroup {
 
 class FileGroup {
   final List<String> content;
-  final LcovGroup lcovGroup;
+  final String filePath;
 
-  FileGroup({required this.content, required this.lcovGroup});
+  FileGroup({required this.content, required this.filePath});
 }
