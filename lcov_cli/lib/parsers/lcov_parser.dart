@@ -5,111 +5,55 @@ import 'package:lcov_cli/models/lcov_file_group.dart';
 import 'package:lcov_cli/models/line.dart';
 import 'package:lcov_cli/parsers/line_parser.dart';
 
-/// A parser class that reads and processes LCOV coverage reports for files.
-///
-/// The `LcovFileLineParser` class is responsible for parsing a given LCOV file
-/// and transforming it into a list of `CodeFile` objects. Each `CodeFile` contains
-/// detailed information about the file, including its lines of code and coverage details.
-///
-/// This class extends `LineParser` and implements the `parsedLines` method to convert
-/// the LCOV data into readable file contents, along with coverage statistics for each line.
+
+/// A parser that reads an LCOV coverage file and converts it into a list of [CodeFile] objects.
+/// Each file contains the coverage data, such as lines hit and missed, extracted from the LCOV format.
 class LcovFileLineParser extends LineParser {
-  /// The LCOV file to be parsed.
+  /// The LCOV file being parsed.
   final File lcovFile;
 
   /// Creates an instance of [LcovFileLineParser].
   ///
-  /// The [lcovFile] is the file that contains the LCOV coverage data that will be parsed.
+  /// - [lcovFile]: The LCOV coverage file to be parsed.
   LcovFileLineParser(this.lcovFile);
 
-  /// Parses the LCOV file and returns a list of [CodeFile] objects.
+  /// Parses the LCOV file and returns a list of [CodeFile] objects, each representing a source file
+  /// with its corresponding coverage data.
   ///
-  /// Each [CodeFile] contains detailed information about the file's content, including:
-  /// - Line numbers.
-  /// - Line content.
-  /// - Hit count for each line (how many times the line was executed).
-  /// - Whether a line was hit or not.
-  /// - Whether a line is eligible for coverage (if it's executable code).
-  ///
-  /// [rootPath] is an optional parameter used to specify the root path of files. If not provided,
-  /// the paths in the LCOV file are assumed to be relative to the root.
-  ///
-  /// Returns a list of [CodeFile] objects, each representing a file and its coverage information.
+  /// - [rootPath] is an optional parameter, but it is not used in this implementation.
+  /// Returns a list of [CodeFile] objects containing coverage data for each file.
   @override
   List<CodeFile> parsedLines([String? rootPath]) {
-    // Parses the LCOV file content into groups representing individual files
+    // Parse the LCOV data into groups, each representing a file's coverage information
     final lcovGroups = parseLCOV(lcovFile.readAsStringSync());
-
-    // Maps each file group to its content lines and creates a FileGroup for further processing
-    final fileGroups = lcovGroups.map((group) {
-      return FileGroup(
-        content: _parseFileContentIntoLines(File('$rootPath/${group.fileName}')),
-        lcovGroup: group,
-      );
-    }).toList();
-
-    // Holds the resulting list of CodeFile objects
-    final codeFiles = <CodeFile>[];
-
-    // Process each file group and map the coverage data to each line of code
-    for (var group in fileGroups) {
-      final lcovLine = <Line>[];
-
-      // Create a map of line numbers to their coverage information (hit status and hit count)
-      final coverageMap = {
-        for (var line in group.lcovGroup.lines) line.lineNumber: (line.isLineHit, line.hitCount)
-      };
-
-      // Iterate through each line in the file content and populate the coverage data for each line
-      for (var i = 0; i < group.content.length; i++) {
-        final index = i + 1;
-
-        lcovLine.add(
-          Line(
-            lineNumber: index,
-            lineContent: group.content[i],
-            hitCount: coverageMap[index]?.$2 ?? 0,
-            isLineHit: coverageMap[index]?.$1 ?? false,
-            canHitLine: group.lcovGroup.lines.map((line) => line.lineNumber).contains(index),
-          ),
-        );
-      }
-
-      // Add the processed file to the list of CodeFiles
-      codeFiles.add(CodeFile(path: group.lcovGroup.fileName, codeLines: lcovLine));
-    }
-
-    return codeFiles;
+    
+    // Map the parsed LCOV groups into CodeFile objects
+    return lcovGroups.map((lcov) => CodeFile(path: lcov.fileName, codeLines: lcov.lines)).toList();
   }
 
-  /// Parses the content of an LCOV file into a list of [LcovGroup] objects.
+  /// Parses the raw LCOV data into a list of [LcovGroup] objects.
   ///
-  /// Each [LcovGroup] represents a file covered by the LCOV report, including details like
-  /// the number of functions found, lines found, lines hit, and the coverage information for each line.
+  /// Each [LcovGroup] represents a source file and contains its corresponding coverage details.
   ///
-  /// The LCOV data is split into sections, each representing a file. Lines beginning with specific
-  /// prefixes such as 'SF:', 'LF:', and 'DA:' are used to extract relevant information.
-  ///
-  /// The function returns a list of [LcovGroup] objects representing the parsed LCOV data.
-  ///
-  /// [lcovData] - A string containing the LCOV data to be parsed.
+  /// - [lcovData]: The raw LCOV file content as a string.
+  /// Returns a list of [LcovGroup] objects, each containing the coverage data of a file.
   List<LcovGroup> parseLCOV(String lcovData) {
     final coverageSections = <LcovGroup>[];
-    String? currentFile;
-    int functionsFound = 0;
-    int linesFound = 0;
-    int linesHit = 0;
-    var lcovLines = <LcovLine>[];
+    String? currentFile;      // Holds the file currently being processed
+    int functionsFound = 0;   // Number of functions found in the file
+    int linesFound = 0;       // Number of lines found in the file
+    int linesHit = 0;         // Number of lines hit in the file (i.e., executed)
+    var lcovLines = <CoverageLine>[];  // List of lines with their coverage data
 
-    // Splitting LCOV data into lines
+    // Split the LCOV data into lines for processing
     final lines = lcovData.split('\n');
     for (final line in lines) {
+      // The LCOV data uses prefixes to indicate the type of each line, extract the prefix.
       final prefix = line.length > 2 ? line.substring(0, 3) : line;
 
-      // Switch based on the line prefix to extract relevant information
       switch (prefix) {
-        case 'SF:':
-          // If there was a previously processed file, add it to the list of coverage sections
+        case 'SF:':  // Start of a new source file (SF)
+          // If there's a previous file being processed, finalize it and add to coverage sections.
           if (currentFile != null) {
             coverageSections.add(LcovGroup(
               fileName: currentFile,
@@ -119,40 +63,38 @@ class LcovFileLineParser extends LineParser {
               lines: lcovLines,
             ));
           }
-          // Start a new file section
-          currentFile = line.substring(3);
+
+          // Start processing a new file
+          currentFile = line.substring(3);  // Extract the file path after 'SF:'
           functionsFound = 0;
           linesFound = 0;
           linesHit = 0;
-          lcovLines = [];
+          lcovLines = [];  // Reset the lines for the new file
           break;
-        case 'FNF':
-          // Number of functions found
-          functionsFound = int.parse(line.substring(4));
+        case 'FNF':  // Number of functions found (FNF)
+          functionsFound = int.parse(line.substring(4));  // Extract the number of functions found
           break;
-        case 'LF:':
-          // Number of lines found
-          linesFound = int.parse(line.substring(3));
+        case 'LF:':  // Number of lines found (LF)
+          linesFound = int.parse(line.substring(3));  // Extract the number of lines found
           break;
-        case 'LH:':
-          // Number of lines hit
-          linesHit = int.parse(line.substring(3));
+        case 'LH:':  // Number of lines hit (LH)
+          linesHit = int.parse(line.substring(3));  // Extract the number of lines hit
           break;
-        case 'DA:':
-          // Line coverage data (line number, hit count)
+        case 'DA:':  // Data about a specific line's coverage (DA)
+          // 'DA:<line number>,<hit count>' represents a line and its hit count
           final parts = line.substring(3).split(',');
-          lcovLines.add(LcovLine(
-            lineNumber: int.parse(parts[0]),
-            hitCount: int.parse(parts[1]),
+          lcovLines.add(CoverageLine(
+            lineNumber: int.parse(parts[0]),  // Line number
+            hitCount: int.parse(parts[1]),    // Hit count (how many times this line was executed)
           ));
           break;
         default:
-          // Handle other cases, if necessary
+          // Ignore other lines as they are not relevant for this parser
           break;
       }
     }
 
-    // Add the final file section to the coverage sections
+    // After the loop, add the last file being processed to the coverage sections.
     if (currentFile != null) {
       coverageSections.add(LcovGroup(
         fileName: currentFile,
@@ -164,14 +106,5 @@ class LcovFileLineParser extends LineParser {
     }
 
     return coverageSections;
-  }
-
-  /// Reads the content of a file and returns it as a list of lines.
-  ///
-  /// [file] - The file to be read.
-  /// Returns a list of strings, where each string represents a line in the file.
-  /// If the file does not exist, returns an empty list.
-  List<String> _parseFileContentIntoLines(File file) {
-    return file.existsSync() ? file.readAsStringSync().split('\n') : [];
   }
 }

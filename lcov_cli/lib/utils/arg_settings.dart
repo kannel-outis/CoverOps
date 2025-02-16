@@ -9,12 +9,14 @@ class ArgumentSettings {
   final String? outputDir;
   final String? projectPath;
   final bool isFlutterProject;
+  final String? gitParserFile;
 
   ArgumentSettings({
     this.lcovFile,
     this.jsonFile,
     this.outputDir,
     this.projectPath,
+    this.gitParserFile,
     this.isFlutterProject = false,
   });
 
@@ -26,12 +28,14 @@ class ArgumentSettings {
     const outputKey = 'output';
     final flutterProjectKey = 'flutter';
     final rootProjectPathKey = 'projectPath';
+    final gitParserFileKey = 'gitParserFile';
 
     _parser
       ..addOption(lcovFileKey, abbr: lcovFileKey.split('').first, help: 'Path to the LCOV file')
       ..addOption(jsonCoverageKey, abbr: jsonCoverageKey.split('').first, help: 'Path to the Json coverage file')
       ..addOption(outputKey, abbr: outputKey.split('').first, help: 'Path to the output directory')
       ..addOption(rootProjectPathKey, abbr: rootProjectPathKey.split('').first, help: 'Path to the project')
+      ..addOption(gitParserFileKey, abbr: gitParserFileKey.split('').first, help: 'Path to the git parser file')
       ..addOption(flutterProjectKey, abbr: flutterProjectKey.split('').first, defaultsTo: 'false', help: 'Whether or not this is a Flutter project');
 
     final results = _parser.parse(args);
@@ -42,6 +46,7 @@ class ArgumentSettings {
       outputDir: results[outputKey] as String?,
       projectPath: results[rootProjectPathKey] as String?,
       isFlutterProject: results[flutterProjectKey] == 'true',
+      gitParserFile: results[gitParserFileKey] as String?,
     );
   }
 
@@ -55,10 +60,14 @@ class ArgumentSettings {
     throw ArgumentError('No coverage file provided');
   }
 
+  File? get gitParserJsonFile {
+    if (gitParserFile != null) return File(gitParserFile!);
+    return null;
+  }
+
   ParserType get parserType {
     if (lcovFile != null) return ParserType.lcov;
     if (jsonFile != null) return ParserType.json;
     throw ArgumentError('No coverage file provided');
   }
-
 }
