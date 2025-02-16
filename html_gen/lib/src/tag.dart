@@ -13,18 +13,13 @@ abstract class Tag {
   ///
   /// Throws an [ArgumentError] if a self-closing tag is created with children or content.
   Tag({this.attributes, this.children, this.content}) {
-    if (isSelfClosing && (children != null || content != null)) {
-      throw ArgumentError('Self-closing tags cannot have children or content.');
-    }
+    assert(!isSelfClosing || (children == null && content == null), 'Self-closing tags cannot have children or content.');
   }
-
-  /// The name of the HTML tag (e.g., 'div', 'span', 'p').
   /// Must be implemented by subclasses.
   String get tagName;
 
   /// Indicates whether the tag is self-closing (e.g., <img />, <br />).
-  /// Defaults to false but can be overridden by subclasses.
-  bool get isSelfClosing => false;
+  bool get isSelfClosing;
 
   /// Builds the HTML string representation of the tag with proper indentation.
   ///
@@ -64,6 +59,7 @@ abstract class Tag {
     return '$indent<$tagName$formattedAttributes></$tagName>';
   }
 }
+
 /// A base class for HTML tags that are not self-closing (e.g., <div>, <p>, <span>).
 ///
 /// These tags can have children elements and content text.
@@ -79,6 +75,10 @@ abstract class NonSelfClosingTag extends Tag {
     super.children,
     super.content,
   });
+
+  /// Always returns false since this is not a self-closing tag.
+  @override
+  bool get isSelfClosing => false;
 
   @override
   String get tagName;

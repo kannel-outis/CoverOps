@@ -8,7 +8,6 @@ void main() {
     final result = tag.build();
 
     expect(result, '<test id="test"></test>');
-    // final
   });
 
   test('should generate a tag with content and id attribute', () async {
@@ -17,7 +16,6 @@ void main() {
     final result = tag.build();
 
     expect(result, '<test id="test">This is a test content</test>');
-    // final
   });
 
   test('should generate a nested tag with proper indentation', () async {
@@ -32,7 +30,6 @@ void main() {
 
     final result = tag.build();
 
-    print(result);
 
     expect(
         result,
@@ -105,4 +102,7 @@ class _TestTag extends Tag {
 
   @override
   String get tagName => 'test';
+
+  @override
+  bool get isSelfClosing => false;
 }
