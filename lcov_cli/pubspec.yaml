@@ -10,6 +10,8 @@ environment:
 dependencies:
   path: ^1.8.0
   args: '^2.4.2'
+  html_gen:
+    path: ../html_gen
 
 dev_dependencies:
   lints: ^4.0.0

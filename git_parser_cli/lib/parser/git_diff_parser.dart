@@ -28,6 +28,18 @@ class GitDiffParser extends GitParser<List<GitFile>> {
   /// The project directory where the Git repository is located.
   final String projectDir;
 
+  /// Creates an instance of `GitDiffParser`.
+  ///
+  /// The [projectDir] is the directory of the Git repository.
+  /// The [sourceBranch] is mandatory, while [targetBranch] and [fallbackBranch]
+  /// are optional branches to be used for comparison.
+  GitDiffParser({
+    required this.projectDir,
+    required this.sourceBranch,
+    this.targetBranch,
+    this.fallbackBranch,
+  });
+
   /// A list of parsed `GitFile` objects that hold the diff output.
   final List<GitFile> _files = [];
 
@@ -45,18 +57,6 @@ class GitDiffParser extends GitParser<List<GitFile>> {
 
   /// Indicates whether the parser is currently reading the content of a file.
   bool _isReadingContent = false;
-
-  /// Creates an instance of `GitDiffParser`.
-  ///
-  /// The [projectDir] is the directory of the Git repository.
-  /// The [sourceBranch] is mandatory, while [targetBranch] and [fallbackBranch]
-  /// are optional branches to be used for comparison.
-  GitDiffParser({
-    required this.projectDir,
-    required this.sourceBranch,
-    this.targetBranch,
-    this.fallbackBranch,
-  });
 
   /// Parses the Git diff output for the specified branches and returns a list of [GitFile] objects.
   ///
@@ -162,7 +162,7 @@ class GitDiffParser extends GitParser<List<GitFile>> {
       return await _runGitCommand(fallbackCommand);
     } else if (exitCode != 0) {
       final buffer = StringBuffer()..writeAll(errorOutput, '\n');
-      if(unKnownError) {
+      if (unKnownError) {
         buffer.write('\n');
         buffer.write('Please provide a valid branch name or commit hash. You can also provide a fallback branch name.');
       }

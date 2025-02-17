@@ -7,8 +7,10 @@ class CodeFile {
   const CodeFile({required this.path, required this.codeLines});
 
   int get totalCodeLines => codeLines.lastOrNull?.lineNumber ?? 0;
+  int get totalHittableLines => codeLines.where((line) => line.canHitLine).length;
   int get totalCoveredLines => codeLines.where((line) => line.isLineHit).length;
   int get totalModifiedLines => codeLines.where((line) => line.isModified).length;
+  bool get isModified => totalModifiedLines > 0;
 
   String get totalCoveragePercentage {
     if (totalCodeLines == 0) return '0 %';

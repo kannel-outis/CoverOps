@@ -40,13 +40,15 @@ class ArgumentSettings {
 
     final results = _parser.parse(args);
 
+
+    // TODO: Fix this
     return ArgumentSettings(
-      lcovFile: results[lcovFileKey] as String?,
+      lcovFile: results[lcovFileKey] as String? ?? '/Users/taiwo.enikuomehin/Documents/work/moniepoint/working space/moniepoint-cards/coverage/lcov.info',
       jsonFile: results[jsonCoverageKey] as String?,
-      outputDir: results[outputKey] as String?,
+      outputDir: results[outputKey] as String? ?? '/Users/taiwo.enikuomehin/Documents/work/moniepoint/working space/moniepoint-cards/coverage/',
       projectPath: results[rootProjectPathKey] as String?,
       isFlutterProject: results[flutterProjectKey] == 'true',
-      gitParserFile: results[gitParserFileKey] as String?,
+      gitParserFile: results[gitParserFileKey] as String? ?? '/Users/taiwo.enikuomehin/Documents/work/moniepoint/working space/moniepoint-cards/coverage/.gitparser.json',
     );
   }
 

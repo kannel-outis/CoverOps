@@ -21,6 +21,8 @@ abstract class Tag {
   /// Indicates whether the tag is self-closing (e.g., <img />, <br />).
   bool get isSelfClosing;
 
+  bool get maintainFormatting => true;
+
   /// Builds the HTML string representation of the tag with proper indentation.
   ///
   /// Parameters:
@@ -33,7 +35,7 @@ abstract class Tag {
   ///   - Content displayed inline when present
   ///   - Nested children properly indented
   String build({int indentLevel = 0}) {
-    final indent = ' ' * (indentLevel * 4); // 4 spaces per indent level
+    final indent = maintainFormatting ? ' ' * (indentLevel * 4) : ''; // 4 spaces per indent level
     final attributesString = attributes?.entries.map((entry) => '${entry.key}="${entry.value}"').join(' ');
     final formattedAttributes = (attributesString != null && attributesString.isNotEmpty) ? ' $attributesString' : '';
 
