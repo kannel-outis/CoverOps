@@ -59,7 +59,13 @@ class LiTag extends NonSelfClosingTag {
 
 /// Represents an anchor HTML element (<a>)
 class ATag extends NonSelfClosingTag {
-  ATag({super.attributes, super.content});
+  ATag({required this.href, this.additionalAttributes, super.content});
+
+  final String href;
+  final Map<String, dynamic>? additionalAttributes;
+
+  @override
+  Map<String, dynamic>? get attributes => {'href': href, ...?additionalAttributes};
 
   @override
   String get tagName => 'a';
@@ -87,4 +93,18 @@ class BodyTag extends NonSelfClosingTag {
 
   @override
   String get tagName => 'body';
+}
+
+class StyleLinkTag extends SelfClosingTag {
+  StyleLinkTag({required this.css});
+  final String css;
+
+
+  @override
+  Map<String, dynamic>? get attributes => {'rel': 'stylesheet', 'href': css, 'type': 'text/css'};
+  
+  @override
+  String get tagName => 'link';
+
+
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:lcov_cli/generators/html_files_gen.dart';
 import 'package:lcov_cli/lcov_cli.dart';
 import 'package:lcov_cli/parsers/code_file_parser.dart';
 import 'package:lcov_cli/parsers/json_parser.dart';
@@ -41,17 +42,18 @@ class LcovCli {
       jsonCodeFiles: gitJsonParser != null ? await gitJsonParser.parsedLines(rootPath) : null,
     );
     final codeFiles = await totalCodeCoverageParser.parsedLines(rootPath);
+    HtmlFilesGen().generateHtmlFiles(codeFiles, outputDir.path);
 
 
-    for (var file in codeFiles) {
-      print('${file.path}:${file.totalModifiedLines}');
+    // for (var file in codeFiles) {
+      // print('${file.path}:${file.totalModifiedLines}');
       // print(file.path);
       // for (var codeLine in file.codeLines) {
       //   print(' ${codeLine.lineNumber}: ${codeLine.lineContent}    | isNewLine:${codeLine.isModified} isLineCovered:${codeLine.canHitLine ? codeLine.isLineHit : true}');
       // }
-    }
+    // }
 
-    print(codeFiles.map((codeFile)=> codeFile.totalModifiedLines > 0).toList().where((mod)=> mod).length);
+    // print(codeFiles.map((codeFile)=> codeFile.totalModifiedLines > 0).toList().where((mod)=> mod).length);
     // print(codeFiles.length);
     
   }
