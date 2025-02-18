@@ -1,7 +1,7 @@
 import 'package:html_gen/html_gen.dart';
 
 class SpanTag extends NonSelfClosingTag {
-  SpanTag({required super.content, super.attributes});
+  SpanTag({super.content, super.attributes});
   @override
   String get tagName => 'span';
 
@@ -67,11 +67,34 @@ class H2Tag extends NonSelfClosingTag {
   String get tagName => 'h1';
 }
 
+class H3Tag extends NonSelfClosingTag {
+  H3Tag({super.attributes, super.content});
+
+  @override
+  String get tagName => 'h3';
+}
+
 class StrongTag extends NonSelfClosingTag {
   StrongTag({required super.content, super.attributes});
   
   @override
   String get tagName => 'strong';
+
+}
+
+class CodeTag extends NonSelfClosingTag {
+  CodeTag({required super.children, super.attributes});
+  
+  @override
+  String get tagName => 'code';
+
+}
+
+class SectioSectionnTag extends NonSelfClosingTag {
+  SectioSectionnTag({super.attributes, super.children});
+
+  @override
+  String get tagName => 'section';
 
 }
 

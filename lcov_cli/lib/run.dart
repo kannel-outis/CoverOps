@@ -27,7 +27,6 @@ class LcovCli {
   }
 
   Future<void> process(File file, Directory outputDir, ParserType type, String? rootPath, String? gitparserFile) async {
-
     LineParser? gitJsonParser;
     if (gitparserFile != null) {
       gitJsonParser = JsonFileLineParser(File(gitparserFile));
@@ -35,26 +34,13 @@ class LcovCli {
 
     final LineParser lcovLineParser = LineParser.fromType(type, file);
     final lcovLines = await lcovLineParser.parsedLines(rootPath);
-    final LineParser codeFileParser = CodeFileParser(filePaths: lcovLines.map((line)=> line.path).toList());
+    final LineParser codeFileParser = CodeFileParser(filePaths: lcovLines.map((line) => line.path).toList());
     final totalCodeCoverageParser = TotalCodeCoverageFileParser(
       coverageCodeFiles: lcovLines,
       originalCodeFiles: await codeFileParser.parsedLines(rootPath),
       jsonCodeFiles: gitJsonParser != null ? await gitJsonParser.parsedLines(rootPath) : null,
     );
     final codeFiles = await totalCodeCoverageParser.parsedLines(rootPath);
-    HtmlFilesGen().generateHtmlFiles(codeFiles, outputDir.path);
-
-
-    // for (var file in codeFiles) {
-      // print('${file.path}:${file.totalModifiedLines}');
-      // print(file.path);
-      // for (var codeLine in file.codeLines) {
-      //   print(' ${codeLine.lineNumber}: ${codeLine.lineContent}    | isNewLine:${codeLine.isModified} isLineCovered:${codeLine.canHitLine ? codeLine.isLineHit : true}');
-      // }
-    // }
-
-    // print(codeFiles.map((codeFile)=> codeFile.totalModifiedLines > 0).toList().where((mod)=> mod).length);
-    // print(codeFiles.length);
-    
+    await HtmlFilesGen().generateHtmlFiles(codeFiles, outputDir.path);
   }
 }

@@ -60,8 +60,8 @@ class HtmlFileHelper {
     }
 
     .folder-list .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      /* display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); */
       gap: 15px;
     }
 
@@ -74,7 +74,7 @@ class HtmlFileHelper {
       transition: background-color 0.3s, transform 0.2s;
       cursor: pointer;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
     }
 
@@ -108,23 +108,24 @@ class HtmlFileHelper {
     /* Code block */
     pre {
       background-color: #282c34;
-      color: #abb2bf;
+      /*color: #abb2bf;*/
+      color: #eee;
       padding: 15px;
       border-radius: 5px;
       overflow: auto;
     }
 
     .code-line {
-      display: block;
+      /*display: block;*/
       white-space: pre;
     }
 
     .line-covered {
-      background-color: rgba(40, 167, 69, 0.1);
+      background-color: rgba(40, 167, 69, 0.2);
     }
 
     .line-missed {
-      background-color: rgba(220, 53, 69, 0.1);
+      background-color: rgba(220, 53, 69, 0.2);
     }
 
     /* Footer */
@@ -143,6 +144,15 @@ class HtmlFileHelper {
     .footer a:hover {
       text-decoration: underline;
     }
+
+  .keyword {
+    color: #d73a49;
+    font-weight: bold;
+  }
+
+  .modified {
+    background-color: rgba(133, 193, 233, 0.3);
+  }
 ''');
     return cssFile.path;
   }
@@ -174,7 +184,7 @@ class HtmlFileHelper {
             H1Tag(content: 'Code Coverage Report'),
             H2SubContentTag(
               titleContent: 'Folder',
-              subContent: SpanTag(content: stats.dirName),
+              subContent: SpanTag(content: stats.dirName.split('/').join('>')),
             ),
           ],
         ),
@@ -198,7 +208,7 @@ class HtmlFileHelper {
             DivTag(
               attributes: {'class': 'stat-item'},
               children: [
-                StrongTag(attributes: {'id': 'coverage-percentage'}, content: '${stats.coveragePercentage}%'),
+                StrongTag(attributes: {'id': 'coverage-percentage'}, content: '${stats.coveragePercentage.toStringAsFixed(1)}%'),
                 SpanTag(content: 'Coverage'),
               ],
             ),
@@ -221,5 +231,5 @@ class FileStats {
     required this.dirName,
   });
 
-  double get coveragePercentage => totalCoveredLines / totalLines * 100;
+  double get coveragePercentage => (totalCoveredLines / totalLines) * 100;
 }
