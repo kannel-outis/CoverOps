@@ -28,6 +28,8 @@ class HtmlFilesGen {
     final Map<String, FileStats> dirStatsMap = {};
 
     for (final file in codeFiles) {
+      //TODO: calculate total coverage on new code
+      //TODO: calculate total coverage on overall code
       final paths = _getFilePaths(file, rootPath, outputDirectory);
       _createDirectoryAndFile(paths, file, cssFilePath, htmlFiles, fileStatsMap, dirStatsMap);
     }
@@ -92,10 +94,10 @@ class HtmlFilesGen {
     Map<String, FileStats> dirStatsMap,
     String cssFilePath,
   ) async {
+    final outputFolder = 'lcov_html/';
     final subDirs = directory.listSync().whereType<Directory>().toList();
     final files = directory.listSync().whereType<File>().where((f) => f.path.endsWith('.html'));
-
-    final dirPath = directory.path.substring(directory.path.indexOf('lcov_html'));
+    final dirPath = directory.path.split(outputFolder).last;
     final dirStats = dirStatsMap[dirPath] ?? FileStats(totalCoveredLines: 0, totalLines: 0, dirName: dirPath);
 
     final indexContent = generateDirectoryIndexContent(subDirs, files, dirStats, cssFilePath);
