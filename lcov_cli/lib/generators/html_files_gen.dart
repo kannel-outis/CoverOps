@@ -8,12 +8,20 @@ import 'package:lcov_cli/models/line.dart';
 import 'package:lcov_cli/utils/utils.dart';
 
 class HtmlFilesGen {
+  final outputRootFolder = 'lcov_html/'; //TODO: change this
+
   Future<List<File>> generateHtmlFiles(List<CodeFile> codeFiles, String outputDir, [String? rootPath]) async {
     final htmlFiles = <File>[];
     final outputDirectory = Directory('${outputDir}lcov_html');
     final cssFilePath = await HtmlFileHelper.generateCssFile(outputDirectory.absolute.path);
     final stats = _processFiles(codeFiles, rootPath, outputDirectory, cssFilePath, htmlFiles);
-    await _generateIndexPages(outputDirectory, stats.fileStats, stats.dirStats, cssFilePath);
+    await _generateIndexPages(
+      outputDirectory,
+      stats.fileStats,
+      stats.dirStats,
+      stats.changedFilesPaths,
+      cssFilePath,
+    );
     return htmlFiles;
   }
 
@@ -26,15 +34,17 @@ class HtmlFilesGen {
   ) {
     final Map<String, FileStats> fileStatsMap = {};
     final Map<String, FileStats> dirStatsMap = {};
+    final List<_FilePaths> changedFilesPaths = [];
 
     for (final file in codeFiles) {
       //TODO: calculate total coverage on new code
       //TODO: calculate total coverage on overall code
       final paths = _getFilePaths(file, rootPath, outputDirectory);
+      if (file.isModified) changedFilesPaths.add(paths);
       _createDirectoryAndFile(paths, file, cssFilePath, htmlFiles, fileStatsMap, dirStatsMap);
     }
 
-    return _FileProcessingStats(fileStatsMap, dirStatsMap);
+    return _FileProcessingStats(fileStatsMap, dirStatsMap, changedFilesPaths);
   }
 
   _FilePaths _getFilePaths(CodeFile file, String? rootPath, Directory outputDirectory) {
@@ -92,21 +102,28 @@ class HtmlFilesGen {
     Directory directory,
     Map<String, FileStats> fileStatsMap,
     Map<String, FileStats> dirStatsMap,
+    List<_FilePaths> changedFilesPaths,
     String cssFilePath,
   ) async {
-    final outputFolder = 'lcov_html/';
     final subDirs = directory.listSync().whereType<Directory>().toList();
-    final files = directory.listSync().whereType<File>().where((f) => f.path.endsWith('.html'));
-    final dirPath = directory.path.split(outputFolder).last;
+    final files = directory.listSync().whereType<File>().where((f) => f.path.endsWith('.html')).toList();
+    // final changedFiles = files.where((f) => changedFilesPaths.any((p) => f.path.contains(p.relativeFilePath)));
+    // List<_FilePaths> changedFiles = changedFilesPaths.map((path) => File(path.relativeFilePath)).toList();
+    List<_FilePaths> changedFiles = changedFilesPaths;
+    final dirPath = directory.path.split(outputRootFolder).last;
     final dirStats = dirStatsMap[dirPath] ?? FileStats(totalCoveredLines: 0, totalLines: 0, dirName: dirPath);
+    if (directory.path.split(outputRootFolder).length > 1) {
+      //means we are in a sub directory
+      changedFiles = [];
+    }
 
-    final indexContent = generateDirectoryIndexContent(subDirs, files, dirStats, cssFilePath);
+    final indexContent = generateDirectoryIndexContent(subDirs, files, dirStats, cssFilePath, changedFiles);
     final indexFile = File('${directory.path}/index.html');
     indexFile.createSync(recursive: true);
     await indexFile.writeAsString(indexContent);
 
     for (final subDir in subDirs) {
-      await _generateIndexPages(subDir, fileStatsMap, dirStatsMap, cssFilePath);
+      await _generateIndexPages(subDir, fileStatsMap, dirStatsMap, changedFilesPaths, cssFilePath);
     }
   }
 
@@ -115,26 +132,45 @@ class HtmlFilesGen {
     Iterable<File> files,
     FileStats stats,
     String cssFilePath,
+    // ignore: library_private_types_in_public_api
+    List<_FilePaths> changedFiles,
   ) {
     final linkTags = _generateLinkTags([...subDirs, ...files]);
+    final changedFilesLinks = changedFiles
+        .map(
+          (file) => buildListItemLink(
+            file.outputFilePath.split(outputRootFolder).last,
+            title: file.outputFilePath.split('/').last,
+          ),
+        )
+        .toList();
 
     return HtmlFileHelper.getFolderIndexHeaer(
       cssFilePath: cssFilePath,
       stats: stats,
-      body: [_buildFolderListSection(linkTags)],
+      body: [
+        if (changedFilesLinks.isNotEmpty) ...[
+          H3Tag(content: 'Changed Files'),
+          _buildFolderListSection(changedFilesLinks),
+        ],
+        _buildFolderListSection(linkTags),
+      ],
     ).build();
   }
 
   List<ATag> _generateLinkTags(Iterable<FileSystemEntity> items) {
-    return items.map((item) {
-      final name = item.path.split('/').last;
-      if (item is Directory) {
-        return buildListItemLink('$name/index.html', title: name);
-      } else if (!name.endsWith('index.html')) {
-        return buildListItemLink(name, title: name.replaceAll('.html', ''));
-      }
-      return null;
-    }).whereType<ATag>().toList();
+    return items
+        .map((item) {
+          final name = item.path.split('/').last;
+          if (item is Directory) {
+            return buildListItemLink('$name/index.html', title: name);
+          } else if (!name.endsWith('index.html')) {
+            return buildListItemLink(name, title: name.replaceAll('.html', ''));
+          }
+          return null;
+        })
+        .whereType<ATag>()
+        .toList();
   }
 
   SectioSectionnTag _buildFolderListSection(List<ATag> linkTags) {
@@ -223,8 +259,9 @@ class HtmlFilesGen {
 class _FileProcessingStats {
   final Map<String, FileStats> fileStats;
   final Map<String, FileStats> dirStats;
+  final List<_FilePaths> changedFilesPaths;
 
-  _FileProcessingStats(this.fileStats, this.dirStats);
+  _FileProcessingStats(this.fileStats, this.dirStats, this.changedFilesPaths);
 }
 
 class _FilePaths {
