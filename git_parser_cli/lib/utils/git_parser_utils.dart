@@ -24,12 +24,18 @@ class GitParserUtils {
   }
 
   static Map<String, Map<String, int>> generateHitMap(List<GitFile> gitfiles) {
-    return {
-      for (final file in gitfiles)
-        file.path: {
-          for (final content in file.content) content.lineNumber: content.isLineAdded ? 1 : 0,
+    final Map<String, Map<String, int>> hitMap = {};
+    for (var file in gitfiles) {
+      hitMap[file.path] = {};
+      for (var content in file.content) {
+        if(hitMap[file.path]![content.lineNumber] != null) {
+          hitMap[file.path]![content.lineNumber] = hitMap[file.path]![content.lineNumber]! + (content.isLineAdded ? 1 : 0);
+        } else {
+        hitMap[file.path]![content.lineNumber] = content.isLineAdded ? 1 : 0;
         }
-    };
+      }
+    }
+    return hitMap;
   }
 
   static Future<void> writeHitMapToJson(Map<String, Map<String, int>> hitMap, String filePath) async {
