@@ -10,6 +10,8 @@ class CodeFile {
   int get totalHittableLines => codeLines.where((line) => line.canHitLine).length;
   int get totalCoveredLines => codeLines.where((line) => line.isLineHit).length;
   int get totalModifiedLines => codeLines.where((line) => line.isModified).length;
+  int get totalHittableModifiedLines => codeLines.where((line) => line.isModified && line.canHitLine).length;
+  int get totalHitOnModifiedLines => codeLines.where((line) => line.isLineHit && line.isModified).length;
   bool get isModified => totalModifiedLines > 0;
 
   String get totalCoveragePercentage {

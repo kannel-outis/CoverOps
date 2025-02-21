@@ -19,7 +19,7 @@ class HtmlFilesGen {
       outputDirectory,
       stats.fileStats,
       stats.dirStats,
-      stats.changedFilesPaths,
+      stats.modifiedCodeFiles,
       cssFilePath,
     );
     return htmlFiles;
@@ -34,17 +34,17 @@ class HtmlFilesGen {
   ) {
     final Map<String, FileStats> fileStatsMap = {};
     final Map<String, FileStats> dirStatsMap = {};
-    final List<_FilePaths> changedFilesPaths = [];
+    final List<_ModifiedCodeFile> modifiedCodeFiles = [];
 
     for (final file in codeFiles) {
       //TODO: calculate total coverage on new code
       //TODO: calculate total coverage on overall code
       final paths = _getFilePaths(file, rootPath, outputDirectory);
-      if (file.isModified) changedFilesPaths.add(paths);
+      if (file.isModified) modifiedCodeFiles.add(_ModifiedCodeFile(paths: paths, file: file));
       _createDirectoryAndFile(paths, file, cssFilePath, htmlFiles, fileStatsMap, dirStatsMap);
     }
 
-    return _FileProcessingStats(fileStatsMap, dirStatsMap, changedFilesPaths);
+    return _FileProcessingStats(fileStatsMap, dirStatsMap, modifiedCodeFiles);
   }
 
   _FilePaths _getFilePaths(CodeFile file, String? rootPath, Directory outputDirectory) {
@@ -102,28 +102,28 @@ class HtmlFilesGen {
     Directory directory,
     Map<String, FileStats> fileStatsMap,
     Map<String, FileStats> dirStatsMap,
-    List<_FilePaths> changedFilesPaths,
+    List<_ModifiedCodeFile> modifiedCodeFiles,
     String cssFilePath,
   ) async {
     final subDirs = directory.listSync().whereType<Directory>().toList();
     final files = directory.listSync().whereType<File>().where((f) => f.path.endsWith('.html')).toList();
     // final changedFiles = files.where((f) => changedFilesPaths.any((p) => f.path.contains(p.relativeFilePath)));
     // List<_FilePaths> changedFiles = changedFilesPaths.map((path) => File(path.relativeFilePath)).toList();
-    List<_FilePaths> changedFiles = changedFilesPaths;
+    List<_ModifiedCodeFile> modifiedFiles = modifiedCodeFiles;
     final dirPath = directory.path.split(outputRootFolder).last;
     final dirStats = dirStatsMap[dirPath] ?? FileStats(totalCoveredLines: 0, totalLines: 0, dirName: dirPath);
     if (directory.path.split(outputRootFolder).length > 1) {
       //means we are in a sub directory
-      changedFiles = [];
+      modifiedFiles = [];
     }
 
-    final indexContent = generateDirectoryIndexContent(subDirs, files, dirStats, cssFilePath, changedFiles);
+    final indexContent = generateDirectoryIndexContent(subDirs, files, dirStats, cssFilePath, modifiedFiles);
     final indexFile = File('${directory.path}/index.html');
     indexFile.createSync(recursive: true);
     await indexFile.writeAsString(indexContent);
 
     for (final subDir in subDirs) {
-      await _generateIndexPages(subDir, fileStatsMap, dirStatsMap, changedFilesPaths, cssFilePath);
+      await _generateIndexPages(subDir, fileStatsMap, dirStatsMap, [], cssFilePath);
     }
   }
 
@@ -133,27 +133,36 @@ class HtmlFilesGen {
     FileStats stats,
     String cssFilePath,
     // ignore: library_private_types_in_public_api
-    List<_FilePaths> changedFiles,
+    List<_ModifiedCodeFile> changedFiles,
   ) {
     final linkTags = _generateLinkTags([...subDirs, ...files]);
     final changedFilesLinks = changedFiles
         .map(
           (file) => buildListItemLink(
-            file.outputFilePath.split(outputRootFolder).last,
-            title: file.outputFilePath.split('/').last,
+            file.paths.outputFilePath.split(outputRootFolder).last,
+            title: file.paths.outputFilePath.split('/').last,
           ),
         )
         .toList();
+    final totalModifiedLines = changedFiles.fold<int>(0, (prev, file) => prev + file.file.totalHittableModifiedLines);
+    final totalHitOnModifiedLines = changedFiles.fold<int>(0, (prev, file) => prev + file.file.totalHitOnModifiedLines);
+    final totalCoverageOnModifiedLines = (totalHitOnModifiedLines / totalModifiedLines) * 100;
+
+    final changedFilesHeader = HtmlFileHelper.getFileStatsBody(
+      totalCoveredLines: totalHitOnModifiedLines,
+      totalLines: totalModifiedLines,
+      coveragePercentage: '${totalCoverageOnModifiedLines.toStringAsFixed(1)}%',
+    );
 
     return HtmlFileHelper.getFolderIndexHeaer(
       cssFilePath: cssFilePath,
       stats: stats,
       body: [
-        if (changedFilesLinks.isNotEmpty) ...[
-          H3Tag(content: 'Changed Files'),
-          _buildFolderListSection(changedFilesLinks),
-        ],
         _buildFolderListSection(linkTags),
+        if (changedFilesLinks.isNotEmpty) ...[
+          H3Tag(content: 'Modified Files (${changedFilesLinks.length})'),
+          _buildFolderListSection(changedFilesLinks, header: changedFilesHeader),
+        ],
       ],
     ).build();
   }
@@ -173,11 +182,11 @@ class HtmlFilesGen {
         .toList();
   }
 
-  SectioSectionnTag _buildFolderListSection(List<ATag> linkTags) {
-    return SectioSectionnTag(
+  SectionTag _buildFolderListSection(List<ATag> linkTags, {Tag? header}) {
+    return SectionTag(
       attributes: {'class': 'folder-list'},
       children: [
-        H3Tag(content: 'Files and Folders'),
+        header ?? H3Tag(content: 'Files and Folders'),
         DivTag(
           attributes: {'class': 'grid'},
           children: linkTags.map(_buildCardDiv).toList(),
@@ -259,9 +268,9 @@ class HtmlFilesGen {
 class _FileProcessingStats {
   final Map<String, FileStats> fileStats;
   final Map<String, FileStats> dirStats;
-  final List<_FilePaths> changedFilesPaths;
+  final List<_ModifiedCodeFile> modifiedCodeFiles;
 
-  _FileProcessingStats(this.fileStats, this.dirStats, this.changedFilesPaths);
+  _FileProcessingStats(this.fileStats, this.dirStats, this.modifiedCodeFiles);
 }
 
 class _FilePaths {
@@ -271,4 +280,11 @@ class _FilePaths {
   final String outputFilePath;
 
   _FilePaths(this.relativeFilePath, this.relativeDir, this.dir, this.outputFilePath);
+}
+
+class _ModifiedCodeFile {
+  final _FilePaths paths;
+  final CodeFile file;
+
+  _ModifiedCodeFile({required this.paths, required this.file});
 }

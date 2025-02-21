@@ -90,8 +90,8 @@ class CodeTag extends NonSelfClosingTag {
 
 }
 
-class SectioSectionnTag extends NonSelfClosingTag {
-  SectioSectionnTag({super.attributes, super.children});
+class SectionTag extends NonSelfClosingTag {
+  SectionTag({super.attributes, super.children});
 
   @override
   String get tagName => 'section';

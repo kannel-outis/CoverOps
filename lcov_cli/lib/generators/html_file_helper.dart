@@ -188,33 +188,41 @@ class HtmlFileHelper {
             ),
           ],
         ),
-        DivTag(
-          attributes: {'class': 'stats'},
-          children: [
-            DivTag(
-              attributes: {'class': 'stat-item'},
-              children: [
-                StrongTag(attributes: {"id": 'total-covered-lines'}, content: '${stats.totalCoveredLines}'),
-                SpanTag(content: 'Covered Lines'),
-              ],
-            ),
-            DivTag(
-              attributes: {'class': 'stat-item'},
-              children: [
-                StrongTag(attributes: {'id': 'total-lines'}, content: '${stats.totalLines}'),
-                SpanTag(content: 'Total Lines'),
-              ],
-            ),
-            DivTag(
-              attributes: {'class': 'stat-item'},
-              children: [
-                StrongTag(attributes: {'id': 'coverage-percentage'}, content: '${stats.coveragePercentage.toStringAsFixed(1)}%'),
-                SpanTag(content: 'Coverage'),
-              ],
-            ),
-          ],
+        getFileStatsBody(
+          totalCoveredLines: stats.totalCoveredLines,
+          totalLines: stats.totalLines,
+          coveragePercentage: stats.coveragePercentageString,
         ),
         ...body,
+      ],
+    );
+  }
+
+  static Tag getFileStatsBody({int totalCoveredLines = 0, int totalLines = 0, String coveragePercentage = '0.0%'}) {
+    return DivTag(
+      attributes: {'class': 'stats'},
+      children: [
+        DivTag(
+          attributes: {'class': 'stat-item'},
+          children: [
+            StrongTag(attributes: {"id": 'total-covered-lines'}, content: '$totalCoveredLines'),
+            SpanTag(content: 'Covered Lines'),
+          ],
+        ),
+        DivTag(
+          attributes: {'class': 'stat-item'},
+          children: [
+            StrongTag(attributes: {'id': 'total-lines'}, content: '$totalLines'),
+            SpanTag(content: 'Total Lines'),
+          ],
+        ),
+        DivTag(
+          attributes: {'class': 'stat-item'},
+          children: [
+            StrongTag(attributes: {'id': 'coverage-percentage'}, content: coveragePercentage),
+            SpanTag(content: 'Coverage'),
+          ],
+        ),
       ],
     );
   }
@@ -232,4 +240,8 @@ class FileStats {
   });
 
   double get coveragePercentage => (totalCoveredLines / totalLines) * 100;
+  String get coveragePercentageString {
+    if(totalCoveredLines == 0 ) return '_';
+    return '${coveragePercentage.toStringAsFixed(1)}%';
+  }
 }
