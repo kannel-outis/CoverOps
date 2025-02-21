@@ -23,7 +23,7 @@ class GitParserUtils {
     );
   }
 
-  static Map<String, Map<String, int>> generateHitMap(List<GitFile> gitfiles) {
+  static Map<String, Map<String, int>> generateDiffMap(List<GitFile> gitfiles) {
     final Map<String, Map<String, int>> hitMap = {};
     for (var file in gitfiles) {
       hitMap[file.path] = {};
@@ -38,7 +38,7 @@ class GitParserUtils {
     return hitMap;
   }
 
-  static Future<void> writeHitMapToJson(Map<String, Map<String, int>> hitMap, String filePath) async {
+  static Future<void> writeDiffMapToJson(Map<String, Map<String, int>> hitMap, String filePath) async {
     try {
       String jsonString = json.encode(hitMap);
       File file = File(filePath);
