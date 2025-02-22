@@ -8,7 +8,7 @@ import 'package:lcov_cli/models/line.dart';
 import 'package:lcov_cli/utils/utils.dart';
 
 class HtmlFilesGen {
-  final outputRootFolder = 'lcov_html/'; //TODO: change this
+  final outputRootFolder = 'lcov_html/'; //TODO(kannel-outis): look into this
 
   Future<List<File>> generateHtmlFiles(List<CodeFile> codeFiles, String outputDir, [String? rootPath]) async {
     final htmlFiles = <File>[];
@@ -37,8 +37,6 @@ class HtmlFilesGen {
     final List<_ModifiedCodeFile> modifiedCodeFiles = [];
 
     for (final file in codeFiles) {
-      //TODO: calculate total coverage on new code
-      //TODO: calculate total coverage on overall code
       final paths = _getFilePaths(file, rootPath, outputDirectory);
       if (file.isModified) modifiedCodeFiles.add(_ModifiedCodeFile(paths: paths, file: file));
       _createDirectoryAndFile(paths, file, cssFilePath, htmlFiles, fileStatsMap, dirStatsMap);
@@ -111,8 +109,6 @@ class HtmlFilesGen {
   ) async {
     final subDirs = directory.listSync().whereType<Directory>().toList();
     final files = directory.listSync().whereType<File>().where((f) => f.path.endsWith('.html')).toList();
-    // final changedFiles = files.where((f) => changedFilesPaths.any((p) => f.path.contains(p.relativeFilePath)));
-    // List<_FilePaths> changedFiles = changedFilesPaths.map((path) => File(path.relativeFilePath)).toList();
     List<_ModifiedCodeFile> modifiedFiles = modifiedCodeFiles;
     final dirPath = directory.path.split(outputRootFolder).last;
     final dirStats = dirStatsMap[dirPath] ??
