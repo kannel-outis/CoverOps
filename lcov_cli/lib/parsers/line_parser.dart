@@ -21,7 +21,7 @@ abstract class LineParser {
   /// - [file]: The file to parse
   /// 
   /// Returns a concrete implementation of [LineParser] based on the [type].
-  /// TODO: maybe move this to the utils file and make it static ??
+  /// TODO(kannel-outis): maybe move this to the utils file and make it static ??
   factory LineParser.fromType(ParserType type, File file) {
     return switch (type) {
       ParserType.lcov => LcovFileLineParser(file),

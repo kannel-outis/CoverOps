@@ -31,8 +31,8 @@ class GitParserCli {
     );
 
     final gitfiles = await gitParser.parse();
-    final hitMap = GitParserUtils.generateHitMap(gitfiles);
+    final hitMap = GitParserUtils.generateDiffMap(gitfiles);
     print(hitMap);
-    await GitParserUtils.writeHitMapToJson(hitMap, '${settings.outputDir}/.gitparser.json');
+    await GitParserUtils.writeDiffMapToJson(hitMap, '${settings.outputDir}/.gitparser.json');
   }
 }

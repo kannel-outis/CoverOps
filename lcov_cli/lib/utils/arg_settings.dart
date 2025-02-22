@@ -40,6 +40,7 @@ class ArgumentSettings {
 
     final results = _parser.parse(args);
 
+
     return ArgumentSettings(
       lcovFile: results[lcovFileKey] as String?,
       jsonFile: results[jsonCoverageKey] as String?,
