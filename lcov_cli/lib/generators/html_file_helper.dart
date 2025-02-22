@@ -192,13 +192,20 @@ class HtmlFileHelper {
           totalCoveredLines: stats.totalCoveredLines,
           totalLines: stats.totalLines,
           coveragePercentage: stats.coveragePercentageString,
+          coverageOnModified: stats.coverageOnModifiedPercentageString,
         ),
         ...body,
       ],
     );
   }
 
-  static Tag getFileStatsBody({int totalCoveredLines = 0, int totalLines = 0, String coveragePercentage = '0.0%'}) {
+  static Tag getFileStatsBody({
+    int totalCoveredLines = 0,
+    int totalLines = 0,
+    String coveragePercentage = '0.0%',
+    String coverageOnModified = '0.0%',
+    bool showCoverageOnModified = true,
+  }) {
     return DivTag(
       attributes: {'class': 'stats'},
       children: [
@@ -216,6 +223,14 @@ class HtmlFileHelper {
             SpanTag(content: 'Total Lines'),
           ],
         ),
+        if (showCoverageOnModified)
+          DivTag(
+            attributes: {'class': 'stat-item'},
+            children: [
+              StrongTag(attributes: {'id': 'coverage-percentage'}, content: coverageOnModified),
+              SpanTag(content: 'Coverage On Modified'),
+            ],
+          ),
         DivTag(
           attributes: {'class': 'stat-item'},
           children: [
@@ -231,17 +246,27 @@ class HtmlFileHelper {
 class FileStats {
   final int totalCoveredLines;
   final int totalLines;
+  final int totalCoveredLinesOnModified;
+  final int totalModifiedLines;
   final String dirName;
 
   FileStats({
     required this.totalCoveredLines,
     required this.totalLines,
+    required this.totalCoveredLinesOnModified,
+    required this.totalModifiedLines,
     required this.dirName,
   });
 
   double get coveragePercentage => (totalCoveredLines / totalLines) * 100;
+  double get coverageOnModifiedPercentage => (totalCoveredLinesOnModified / totalModifiedLines) * 100;
   String get coveragePercentageString {
     if(totalCoveredLines == 0 ) return '_';
     return '${coveragePercentage.toStringAsFixed(1)}%';
+  }
+
+  String get coverageOnModifiedPercentageString {
+    if(totalModifiedLines == 0 ) return '_';
+    return '${coverageOnModifiedPercentage.toStringAsFixed(1)}%';
   }
 }

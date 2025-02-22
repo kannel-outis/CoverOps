@@ -70,6 +70,8 @@ class HtmlFilesGen {
     final fileStats = FileStats(
       totalCoveredLines: file.totalCoveredLines,
       totalLines: file.totalHittableLines,
+      totalModifiedLines: file.totalHittableModifiedLines,
+      totalCoveredLinesOnModified: file.totalHitOnModifiedLines,
       dirName: paths.relativeDir,
     );
 
@@ -90,6 +92,8 @@ class HtmlFilesGen {
         (existing) => FileStats(
           totalCoveredLines: existing.totalCoveredLines + fileStats.totalCoveredLines,
           totalLines: existing.totalLines + fileStats.totalLines,
+          totalModifiedLines: existing.totalModifiedLines + fileStats.totalModifiedLines,
+          totalCoveredLinesOnModified: existing.totalCoveredLinesOnModified + fileStats.totalCoveredLinesOnModified,
           dirName: currentDir,
         ),
         ifAbsent: () => fileStats,
@@ -111,7 +115,14 @@ class HtmlFilesGen {
     // List<_FilePaths> changedFiles = changedFilesPaths.map((path) => File(path.relativeFilePath)).toList();
     List<_ModifiedCodeFile> modifiedFiles = modifiedCodeFiles;
     final dirPath = directory.path.split(outputRootFolder).last;
-    final dirStats = dirStatsMap[dirPath] ?? FileStats(totalCoveredLines: 0, totalLines: 0, dirName: dirPath);
+    final dirStats = dirStatsMap[dirPath] ??
+        FileStats(
+          totalCoveredLines: 0,
+          totalLines: 0,
+          dirName: dirPath,
+          totalCoveredLinesOnModified: 0,
+          totalModifiedLines: 0,
+        );
     if (directory.path.split(outputRootFolder).length > 1) {
       //means we are in a sub directory
       modifiedFiles = [];
@@ -149,6 +160,7 @@ class HtmlFilesGen {
     final totalCoverageOnModifiedLines = (totalHitOnModifiedLines / totalModifiedLines) * 100;
 
     final changedFilesHeader = HtmlFileHelper.getFileStatsBody(
+      showCoverageOnModified: false,
       totalCoveredLines: totalHitOnModifiedLines,
       totalLines: totalModifiedLines,
       coveragePercentage: '${totalCoverageOnModifiedLines.toStringAsFixed(1)}%',
