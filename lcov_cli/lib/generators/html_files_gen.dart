@@ -140,19 +140,25 @@ class HtmlFilesGen {
     FileStats stats,
     String cssFilePath,
     // ignore: library_private_types_in_public_api
-    List<_ModifiedCodeFile> changedFiles,
+    List<_ModifiedCodeFile> modifiedfiles,
   ) {
     final linkTags = _generateLinkTags([...subDirs, ...files]);
-    final changedFilesLinks = changedFiles
+    //TODO(kannel-outis): Fix this later into its own tag
+    modifiedfiles.sort((a, b)=> ((b.file.totalHitOnModifiedLines / b.file.totalHittableModifiedLines) * 100).compareTo(((a.file.totalHitOnModifiedLines / a.file.totalHittableModifiedLines) * 100)));
+    final changedFilesLinks = modifiedfiles
         .map(
           (file) => buildListItemLink(
             file.paths.outputFilePath.split(outputRootFolder).last,
-            title: file.paths.outputFilePath.split('/').last,
+            //TODO(kannel-outis): Fix this later into its own tag
+            title: '${file.paths.outputFilePath.split('/').last} --------------------------------- ${HtmlFileHelper.getCoveragePercentage(
+              totalCoveredLines: file.file.totalHitOnModifiedLines,
+              totalLines: file.file.totalHittableModifiedLines,
+            )}',
           ),
         )
         .toList();
-    final totalModifiedLines = changedFiles.fold<int>(0, (prev, file) => prev + file.file.totalHittableModifiedLines);
-    final totalHitOnModifiedLines = changedFiles.fold<int>(0, (prev, file) => prev + file.file.totalHitOnModifiedLines);
+    final totalModifiedLines = modifiedfiles.fold<int>(0, (prev, file) => prev + file.file.totalHittableModifiedLines);
+    final totalHitOnModifiedLines = modifiedfiles.fold<int>(0, (prev, file) => prev + file.file.totalHitOnModifiedLines);
     final totalCoverageOnModifiedLines = (totalHitOnModifiedLines / totalModifiedLines) * 100;
 
     final changedFilesHeader = HtmlFileHelper.getFileStatsBody(

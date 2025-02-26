@@ -241,6 +241,13 @@ class HtmlFileHelper {
       ],
     );
   }
+
+  static String getCoveragePercentage({required int totalCoveredLines, required int totalLines}) {
+    if (totalCoveredLines == 0 && totalLines > 0) return '0.0%';
+    if(totalCoveredLines == 0 && totalLines == 0) return '100.0%';
+    if (totalLines == 0) return '100.0%';
+    return '${((totalCoveredLines / totalLines) * 100).toStringAsFixed(1)}%';
+  }
 }
 
 class FileStats {
@@ -258,15 +265,17 @@ class FileStats {
     required this.dirName,
   });
 
-  double get coveragePercentage => (totalCoveredLines / totalLines) * 100;
-  double get coverageOnModifiedPercentage => (totalCoveredLinesOnModified / totalModifiedLines) * 100;
   String get coveragePercentageString {
-    if(totalCoveredLines == 0 ) return '_';
-    return '${coveragePercentage.toStringAsFixed(1)}%';
+    return HtmlFileHelper.getCoveragePercentage(
+      totalCoveredLines: totalCoveredLines,
+      totalLines: totalLines,
+    );
   }
 
   String get coverageOnModifiedPercentageString {
-    if(totalModifiedLines == 0 ) return '_';
-    return '${coverageOnModifiedPercentage.toStringAsFixed(1)}%';
+    return HtmlFileHelper.getCoveragePercentage(
+      totalCoveredLines: totalCoveredLinesOnModified,
+      totalLines: totalModifiedLines,
+    );
   }
 }
