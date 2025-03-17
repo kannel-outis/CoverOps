@@ -246,7 +246,12 @@ class HtmlFilesGen {
   }
 
   String wrapKeywords(String line) {
-    return line.split(' ').map((word) {
+    return line.split(' ').map((raw) {
+      String word = raw;
+      //fixes the issue with special characters like <> where html renderer sees 'Map<String, dynamic>' as a tag
+      for (final char in defaultSpecialCharSubForHtmlRendrer.entries) {
+        word = word.replaceAll(char.key, char.value);
+      }
       if (defaultLanguageKeywords.contains(word)) {
         return SpanTag(content: word, attributes: {'class': 'keyword'}).build();
       }

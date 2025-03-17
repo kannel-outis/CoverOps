@@ -84,3 +84,10 @@ List<String> get defaultLanguageKeywords {
     'yield',
   ];
 }
+
+Map<String, String> get defaultSpecialCharSubForHtmlRendrer {
+  return {
+    '>': '&gt;',
+    '<': '&lt;',
+  };
+}
