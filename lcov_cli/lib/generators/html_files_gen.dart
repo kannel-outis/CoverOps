@@ -140,19 +140,24 @@ class HtmlFilesGen {
     FileStats stats,
     String cssFilePath,
     // ignore: library_private_types_in_public_api
-    List<_ModifiedCodeFile> changedFiles,
+    List<_ModifiedCodeFile> modifiedfiles,
   ) {
     final linkTags = _generateLinkTags([...subDirs, ...files]);
-    final changedFilesLinks = changedFiles
+    modifiedfiles.sort((a, b)=> ((b.file.totalHitOnModifiedLines / b.file.totalHittableModifiedLines) * 100).compareTo(((a.file.totalHitOnModifiedLines / a.file.totalHittableModifiedLines) * 100)));
+    final changedFilesLinks = modifiedfiles
         .map(
           (file) => buildListItemLink(
             file.paths.outputFilePath.split(outputRootFolder).last,
             title: file.paths.outputFilePath.split('/').last,
+            childContent: HtmlFileHelper.getCoveragePercentage(
+              totalCoveredLines: file.file.totalHitOnModifiedLines,
+              totalLines: file.file.totalHittableModifiedLines,
+            ),
           ),
         )
         .toList();
-    final totalModifiedLines = changedFiles.fold<int>(0, (prev, file) => prev + file.file.totalHittableModifiedLines);
-    final totalHitOnModifiedLines = changedFiles.fold<int>(0, (prev, file) => prev + file.file.totalHitOnModifiedLines);
+    final totalModifiedLines = modifiedfiles.fold<int>(0, (prev, file) => prev + file.file.totalHittableModifiedLines);
+    final totalHitOnModifiedLines = modifiedfiles.fold<int>(0, (prev, file) => prev + file.file.totalHitOnModifiedLines);
     final totalCoverageOnModifiedLines = (totalHitOnModifiedLines / totalModifiedLines) * 100;
 
     final changedFilesHeader = HtmlFileHelper.getFileStatsBody(
@@ -235,12 +240,26 @@ class HtmlFilesGen {
     );
   }
 
-  ATag buildListItemLink(String path, {String? title}) {
-    return ATag(href: path, content: title);
+  ATag buildListItemLink(String path, {String? title, String? childContent}) {
+    final children = [
+      if (title != null) DivTag(content: title),
+      if (childContent != null) DivTag(content: childContent),
+    ];
+    return ATag(
+      href: path,
+      content: childContent != null ? null : title,
+      additionalAttributes: {'class': 'modified-files-link'},
+      children: children,
+    );
   }
 
   String wrapKeywords(String line) {
-    return line.split(' ').map((word) {
+    return line.split(' ').map((raw) {
+      String word = raw;
+      //fixes the issue with special characters like <> where html renderer sees 'Map<String, dynamic>' as a tag
+      for (final char in defaultSpecialCharSubForHtmlRendrer.entries) {
+        word = word.replaceAll(char.key, char.value);
+      }
       if (defaultLanguageKeywords.contains(word)) {
         return SpanTag(content: word, attributes: {'class': 'keyword'}).build();
       }
