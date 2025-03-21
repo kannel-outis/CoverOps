@@ -153,6 +153,12 @@ class HtmlFileHelper {
   .modified {
     background-color: rgba(133, 193, 233, 0.3);
   }
+  .modified-files-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
 ''');
     return cssFile.path;
   }

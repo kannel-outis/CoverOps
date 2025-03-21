@@ -143,17 +143,16 @@ class HtmlFilesGen {
     List<_ModifiedCodeFile> modifiedfiles,
   ) {
     final linkTags = _generateLinkTags([...subDirs, ...files]);
-    //TODO(kannel-outis): Fix this later into its own tag
     modifiedfiles.sort((a, b)=> ((b.file.totalHitOnModifiedLines / b.file.totalHittableModifiedLines) * 100).compareTo(((a.file.totalHitOnModifiedLines / a.file.totalHittableModifiedLines) * 100)));
     final changedFilesLinks = modifiedfiles
         .map(
           (file) => buildListItemLink(
             file.paths.outputFilePath.split(outputRootFolder).last,
-            //TODO(kannel-outis): Fix this later into its own tag
-            title: '${file.paths.outputFilePath.split('/').last} --------------------------------- ${HtmlFileHelper.getCoveragePercentage(
+            title: file.paths.outputFilePath.split('/').last,
+            childContent: HtmlFileHelper.getCoveragePercentage(
               totalCoveredLines: file.file.totalHitOnModifiedLines,
               totalLines: file.file.totalHittableModifiedLines,
-            )}',
+            ),
           ),
         )
         .toList();
@@ -241,8 +240,17 @@ class HtmlFilesGen {
     );
   }
 
-  ATag buildListItemLink(String path, {String? title}) {
-    return ATag(href: path, content: title);
+  ATag buildListItemLink(String path, {String? title, String? childContent}) {
+    final children = [
+      if (title != null) DivTag(content: title),
+      if (childContent != null) DivTag(content: childContent),
+    ];
+    return ATag(
+      href: path,
+      content: childContent != null ? null : title,
+      additionalAttributes: {'class': 'modified-files-link'},
+      children: children,
+    );
   }
 
   String wrapKeywords(String line) {

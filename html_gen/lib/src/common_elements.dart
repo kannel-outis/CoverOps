@@ -59,7 +59,7 @@ class LiTag extends NonSelfClosingTag {
 
 /// Represents an anchor HTML element (<a>)
 class ATag extends NonSelfClosingTag {
-  ATag({required this.href, this.additionalAttributes, super.content});
+  ATag({required this.href, this.additionalAttributes, super.content, super.children});
 
   final String href;
   final Map<String, dynamic>? additionalAttributes;
