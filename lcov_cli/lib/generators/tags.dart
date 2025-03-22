@@ -1,7 +1,7 @@
 import 'package:html_gen/html_gen.dart';
 
 class SpanTag extends NonSelfClosingTag {
-  SpanTag({super.content, super.attributes});
+  SpanTag({super.content, super.attributes, super.children});
   @override
   String get tagName => 'span';
 

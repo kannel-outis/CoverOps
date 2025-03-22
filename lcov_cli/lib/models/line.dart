@@ -39,6 +39,9 @@ class GitLine extends Line {
 
   final bool hasLineChanged;
 
+  @override
+  bool get isModified => hasLineChanged;
+
 }
 
 class FileLine extends Line {
