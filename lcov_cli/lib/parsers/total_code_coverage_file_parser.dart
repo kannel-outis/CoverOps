@@ -7,6 +7,7 @@ import 'package:lcov_cli/parsers/line_parser.dart';
 /// A parser class that processes original code files by augmenting them with
 /// coverage and line change information from coverage data and optionally JSON code files.
 /// The result is a list of `CodeFile` objects that contain coverage and change data for each line.
+@Deprecated('Use CodeCoverageFileParser instead')
 class TotalCodeCoverageFileParser extends LineParser {
   /// Creates a new instance of [TotalCodeCoverageFileParser].
   ///

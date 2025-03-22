@@ -143,7 +143,9 @@ class HtmlFilesGen {
     List<_ModifiedCodeFile> modifiedfiles,
   ) {
     final linkTags = _generateLinkTags([...subDirs, ...files]);
-    modifiedfiles.sort((a, b)=> ((b.file.totalHitOnModifiedLines / b.file.totalHittableModifiedLines) * 100).compareTo(((a.file.totalHitOnModifiedLines / a.file.totalHittableModifiedLines) * 100)));
+    modifiedfiles.sort((a, b) => ((b.file.totalHitOnModifiedLines / b.file.totalHittableModifiedLines) * 100).compareTo(
+          ((a.file.totalHitOnModifiedLines / a.file.totalHittableModifiedLines) * 100),
+        ));
     final changedFilesLinks = modifiedfiles
         .map(
           (file) => buildListItemLink(
@@ -242,14 +244,16 @@ class HtmlFilesGen {
 
   ATag buildListItemLink(String path, {String? title, String? childContent}) {
     final children = [
-      if (title != null) DivTag(content: title),
-      if (childContent != null) DivTag(content: childContent),
+      SpanTag(
+        content: title,
+        attributes: {'class': 'part'},
+      ),
+      if (childContent != null) SpanTag(content: childContent, attributes: {'class': 'part'}),
     ];
     return ATag(
-      href: path,
-      content: childContent != null ? null : title,
       additionalAttributes: {'class': 'modified-files-link'},
-      children: children,
+      href: path,
+      content: DivTag(children: children).build(),
     );
   }
 
