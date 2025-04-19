@@ -46,7 +46,7 @@ class HtmlFilesGen {
   }
 
   _FilePaths _getFilePaths(CodeFile file, String? rootPath, Directory outputDirectory) {
-    final relativeFilePath = rootPath != null ? file.path.replaceFirst(rootPath, '') : file.path;
+    final relativeFilePath = rootPath != null ? file.path.replaceFirst('$rootPath/', '') : file.path;
     final pathParts = relativeFilePath.split('/');
     final relativeDir = pathParts.sublist(0, pathParts.length - 1).join('/');
     final dir = Directory('${outputDirectory.path}/$relativeDir');

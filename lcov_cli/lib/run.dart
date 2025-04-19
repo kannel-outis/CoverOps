@@ -18,7 +18,6 @@ class LcovCli {
     final outputDir = settings.outputDir;
 
     final projectPath = settings.projectPath ?? coverageFile.path.split('/coverage').firstOrNull;
-    print(projectPath);
     final parsedProjectDir = Directory(projectPath?.toString() ?? '');
 
     if (!parsedProjectDir.existsSync()) exitWithMessage('Cannot find project, please provide a valid project path --> $projectPath');
@@ -42,6 +41,6 @@ class LcovCli {
       modifiedCodeFiles: gitJsonParser != null ? await gitJsonParser.parsedLines(rootPath) : null,
     );
     final codeFiles = await totalCodeCoverageParser.parsedLines(rootPath);
-    await HtmlFilesGen().generateHtmlFiles(codeFiles, outputDir.path);
+    await HtmlFilesGen().generateHtmlFiles(codeFiles, outputDir.path, rootPath);
   }
 }
