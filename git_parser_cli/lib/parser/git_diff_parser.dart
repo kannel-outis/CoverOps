@@ -67,8 +67,8 @@ class GitDiffParser extends GitParser<List<GitFile>> {
   @override
   Future<List<GitFile>> parse() async {
     // Construct the diff command for the target and fallback branches
-    final command = ['diff', '$targetBranch...$sourceBranch'];
-    final fallBack = ['diff', '$fallbackBranch...$sourceBranch'];
+    final command = ['diff', '$targetBranch..$sourceBranch'];
+    final fallBack = ['diff', '$fallbackBranch..$sourceBranch'];
 
     // Run the Git command and fallback if necessary
     await _runGitCommand(command, fallbackCommand: fallBack);

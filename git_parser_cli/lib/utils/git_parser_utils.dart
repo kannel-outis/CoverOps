@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -23,15 +24,17 @@ class GitParserUtils {
     );
   }
 
-  static Map<String, Map<String, int>> generateDiffMap(List<GitFile> gitfiles) {
+  static Map<String, Map<String, int>> generateDiffMap(List<GitFile> gitfiles, String gitPath) {
     final Map<String, Map<String, int>> hitMap = {};
+    final cleanGitPath = gitPath.isEmpty ? '' : '$gitPath/';
     for (var file in gitfiles) {
-      hitMap[file.path] = {};
+      final path = '$cleanGitPath${file.path}';
+      hitMap[path] = {};
       for (var content in file.content) {
-        if(hitMap[file.path]![content.lineNumber] != null) {
-          hitMap[file.path]![content.lineNumber] = hitMap[file.path]![content.lineNumber]! + (content.isLineAdded ? 1 : 0);
+        if(hitMap[path]![content.lineNumber] != null) {
+          hitMap[path]![content.lineNumber] = hitMap[path]![content.lineNumber]! + (content.isLineAdded ? 1 : 0);
         } else {
-        hitMap[file.path]![content.lineNumber] = content.isLineAdded ? 1 : 0;
+        hitMap[path]![content.lineNumber] = content.isLineAdded ? 1 : 0;
         }
       }
     }
@@ -51,5 +54,17 @@ class GitParserUtils {
     } catch (e) {
       exitWithMessage(e.toString());
     }
+  }
+
+  static Future<String> getCurrentGitDir() async {
+    final process = await Process.run(
+      'git',
+      ['rev-parse', '--show-toplevel'],
+      runInShell: true,
+    );
+    if(process.exitCode != 0) {
+      return '';
+    }
+    return process.stdout.toString().trim();
   }
 }
