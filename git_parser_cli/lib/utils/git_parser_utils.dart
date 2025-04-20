@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' hide Process;
 
 import 'package:args/args.dart';
 import 'package:git_parser_cli/models/git_file.dart';
 import 'package:git_parser_cli/models/git_settings.dart';
+import 'package:git_parser_cli/process.dart';
 import 'package:git_parser_cli/utils/utils.dart';
 
 class GitParserUtils {
@@ -57,7 +58,7 @@ class GitParserUtils {
   }
 
   static Future<String> getCurrentGitDir() async {
-    final process = await Process.run(
+    final process = await Process.instance.run(
       'git',
       ['rev-parse', '--show-toplevel'],
       runInShell: true,

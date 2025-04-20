@@ -64,11 +64,32 @@ if [ -f "$pubspec_path" ]; then
     if [[ " ${args[@]} " =~ "--skip-coverage" ]]; then
         echo "Skipping flutter test coverage..."
     else
-        flutter test --coverage
+        dart run coverage:test_with_coverage
         lcov --remove coverage/lcov.info '*.g.dart' '*.part.dart' -o coverage/lcov.info
     fi
 
-    run_lcov_cli
+    # run_lcov_cli
+    cliPathDir="${cur%%/lcov_reader_worspace/*}/lcov_reader_worspace"
+    dart $cliPathDir/git_parser_cli/bin/git_parser_cli.dart --target-branch="$target_branch" --source-branch=HEAD --output-dir="$cur/coverage"
+    dart $cliPathDir/lcov_cli/bin/lcov_cli.dart --lcov="$cur/coverage/lcov.info" --output="$cur/coverage/" --gitParserFile="$cur/coverage/.gitparser.json"
+
+    file_path="file://$cur/coverage/lcov_html/index.html"
+    echo "$file_path"
+
+
+    if [[ " ${args[@]} " =~ "open" ]]; then
+        open "$file_path"
+    else
+        read -p "Do you want to open the result? (y/n): " ans
+        case "$ans" in
+            y|Y ) open "$file_path"
+                ;;
+            n|N ) echo ""
+                ;;
+            * ) echo ""
+                ;;
+        esac
+    fi
    
 else
     echo "$cur is not a flutter project directory. Enter a flutter package root directory."

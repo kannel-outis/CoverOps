@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' hide exitCode;
+import 'dart:io' as io;
 import 'dart:math';
 
 import 'package:git_parser_cli/models/git_file.dart';
 import 'package:git_parser_cli/parser/git_parser.dart';
+import 'package:git_parser_cli/process.dart';
 import 'package:git_parser_cli/utils/utils.dart';
 
 /// A parser for Git `diff` output, used to compare files between branches.
@@ -135,8 +136,8 @@ class GitDiffParser extends GitParser<List<GitFile>> {
   /// is used as a fallback if the original command fails due to a missing revision or path.
   ///
   /// Returns a [Future] that completes with the `Process` object once the command succeeds or fails.
-  Future<Process> _runGitCommand(List<String> command, {List<String>? fallbackCommand}) async {
-    final process = await Process.start(
+  Future<io.Process> _runGitCommand(List<String> command, {List<String>? fallbackCommand}) async {
+    final process = await Process.instance.start(
       'git',
       command,
       runInShell: true,
@@ -184,7 +185,7 @@ class GitDiffParser extends GitParser<List<GitFile>> {
   ///
   /// This method demonstrates running a simple shell command within the project's directory.
   Future<void> gotoDirectory() async {
-    final process = await Process.start('ls', ['-l'], workingDirectory: projectDir, runInShell: true);
+    final process = await Process.instance.start('ls', ['-l'], workingDirectory: projectDir, runInShell: true);
     await process.exitCode;
   }
 }
