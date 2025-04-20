@@ -181,11 +181,4 @@ class GitDiffParser extends GitParser<List<GitFile>> {
     return RegExp(r'^\+\+\+ \/dev\/null$').hasMatch(line);
   }
 
-  /// Navigates to the project directory and lists its contents using `ls -l`.
-  ///
-  /// This method demonstrates running a simple shell command within the project's directory.
-  Future<void> gotoDirectory() async {
-    final process = await Process.instance.start('ls', ['-l'], workingDirectory: projectDir, runInShell: true);
-    await process.exitCode;
-  }
 }
