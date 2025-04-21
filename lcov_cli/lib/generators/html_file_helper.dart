@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dcli/dcli.dart';
 import 'package:html_gen/html_gen.dart';
 import 'package:lcov_cli/generators/tags.dart';
 
@@ -7,10 +8,10 @@ class HtmlFileHelper {
   HtmlFileHelper._();
 
   static Future<String> generateCssFile(String outputDir) async {
-    final cssFilePath = '${Platform.script.toFilePath().split('lcov_cli').first}lcov_cli/lib/generators/templates/__template__.css';
+    final cssFilePath = '${DartScript.self.pathToScriptDirectory.split('lcov_cli').first}lcov_cli/lib/generators/templates/__template__.css';
     final cssFile = File('$outputDir/style.css');
     await cssFile.create(recursive: true);
-    await cssFile.writeAsString(File(cssFilePath).readAsStringSync());
+    await cssFile.writeAsString(await File(cssFilePath).readAsString());
     return cssFile.path;
   }
 

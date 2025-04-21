@@ -14,7 +14,7 @@ class HtmlFilesGen {
     final htmlFiles = <File>[];
     final outputDirectory = Directory('${outputDir}lcov_html');
     final cssFilePath = await HtmlFileHelper.generateCssFile(outputDirectory.absolute.path);
-    final stats = _processFiles(codeFiles, rootPath, outputDirectory, cssFilePath, htmlFiles);
+    final stats = await _processFiles(codeFiles, rootPath, outputDirectory, cssFilePath, htmlFiles);
     await _generateIndexPages(
       outputDirectory,
       stats.fileStats,
@@ -25,13 +25,13 @@ class HtmlFilesGen {
     return htmlFiles;
   }
 
-  _FileProcessingStats _processFiles(
+  Future<_FileProcessingStats> _processFiles(
     List<CodeFile> codeFiles,
     String? rootPath,
     Directory outputDirectory,
     String cssFilePath,
     List<File> htmlFiles,
-  ) {
+  ) async {
     final Map<String, FileStats> fileStatsMap = {};
     final Map<String, FileStats> dirStatsMap = {};
     final List<_ModifiedCodeFile> modifiedCodeFiles = [];
@@ -39,7 +39,7 @@ class HtmlFilesGen {
     for (final file in codeFiles) {
       final paths = _getFilePaths(file, rootPath, outputDirectory);
       if (file.isModified) modifiedCodeFiles.add(_ModifiedCodeFile(paths: paths, file: file));
-      _createDirectoryAndFile(paths, file, cssFilePath, htmlFiles, fileStatsMap, dirStatsMap);
+      await _createDirectoryAndFile(paths, file, cssFilePath, htmlFiles, fileStatsMap, dirStatsMap);
     }
 
     return _FileProcessingStats(fileStatsMap, dirStatsMap, modifiedCodeFiles);
@@ -55,7 +55,7 @@ class HtmlFilesGen {
     return _FilePaths(relativeFilePath, relativeDir, dir, outputFilePath);
   }
 
-  void _createDirectoryAndFile(
+  Future<void> _createDirectoryAndFile(
     _FilePaths paths,
     CodeFile file,
     String cssFilePath,
@@ -302,6 +302,11 @@ class _FileProcessingStats {
   final List<_ModifiedCodeFile> modifiedCodeFiles;
 
   _FileProcessingStats(this.fileStats, this.dirStats, this.modifiedCodeFiles);
+
+  @override
+  String toString() {
+    return '_FileProcessingStats(fileStats: $fileStats, dirStats: $dirStats, modifiedCodeFiles: $modifiedCodeFiles)';
+  }
 }
 
 class _FilePaths {
@@ -311,6 +316,11 @@ class _FilePaths {
   final String outputFilePath;
 
   _FilePaths(this.relativeFilePath, this.relativeDir, this.dir, this.outputFilePath);
+
+  @override
+  String toString() {
+    return '_FilePaths(relativeFilePath: $relativeFilePath, relativeDir: $relativeDir, dir: $dir, outputFilePath: $outputFilePath)';
+  }
 }
 
 class _ModifiedCodeFile {
@@ -318,4 +328,9 @@ class _ModifiedCodeFile {
   final CodeFile file;
 
   _ModifiedCodeFile({required this.paths, required this.file});
+
+  @override
+  String toString() {
+    return '_ModifiedCodeFile(paths: $paths, file: $file)';
+  }
 }

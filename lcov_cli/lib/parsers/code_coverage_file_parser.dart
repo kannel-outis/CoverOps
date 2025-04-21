@@ -35,7 +35,10 @@ class CodeCoverageFileParser extends LineParser {
   FutureOr<List<CodeFile>> parsedLines([String? rootPath]) {
     // Extract paths from coverage files.
     final fileRootPath = rootPath != null ? '$rootPath/' : '';
-    final filePaths = coverageCodeFiles.map((file) => fileRootPath +file.path).toList();
+
+    // Returns the relative file path or the original path with root path prepended if no root path is found.
+    String getLcovFilePath(String path) => path.contains(fileRootPath) ? path : fileRootPath + path;
+    final filePaths = coverageCodeFiles.map((file) => getLcovFilePath(file.path)).toList();
 
     final codeFiles = <CodeFile>[];
 
@@ -50,7 +53,7 @@ class CodeCoverageFileParser extends LineParser {
     final modifiedFilesByPath = {for (var file in modifiedCodeFiles ?? <CodeFile>[]) file.path: file};
 
     // Map of coverage files by file path.
-    final coverageFilesByPath = {for (var file in coverageCodeFiles) fileRootPath + file.path: file};
+    final coverageFilesByPath = {for (var file in coverageCodeFiles) getLcovFilePath(file.path): file};
 
     // Process each file group (coverage files).
     for (var group in fileGroups) {
