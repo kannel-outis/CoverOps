@@ -1,6 +1,8 @@
 import 'package:args/args.dart';
 import 'package:file/local.dart';
+import 'package:git_parser_cli/models/git_file.dart';
 import 'package:git_parser_cli/parser/git_diff_parser.dart';
+import 'package:git_parser_cli/parser/git_parser.dart';
 import 'package:git_parser_cli/utils/git_parser_utils.dart';
 
 class GitParserCli {
@@ -23,7 +25,8 @@ class GitParserCli {
 
     final args = parser.parse(arguments);
     final settings = GitParserUtils.getGitSettings(args);
-    final gitParser = GitDiffParser(
+    
+    GitParser<List<GitFile>> gitParser = GitDiffParser(
       targetBranch: settings.targetBranch,
       sourceBranch: settings.sourceBranch,
       fallbackBranch: settings.targetBranchFallback,
