@@ -15,12 +15,29 @@ class Line {
   final bool canHitLine;
   final bool isModified;
 
+  Line copyWith({
+    int? lineNumber,
+    String? lineContent,
+    int? hitCount,
+    bool? isModified,
+    bool? isLineHit,
+    bool? canHitLine,
+  }) {
+    return Line(
+      lineNumber: lineNumber ?? this.lineNumber,
+      lineContent: lineContent ?? this.lineContent,
+      hitCount: hitCount ?? this.hitCount,
+      isModified: isModified ?? this.isModified,
+      isLineHit: isLineHit ?? this.isLineHit,
+      canHitLine: canHitLine ?? this.canHitLine,
+    );
+  }
+
   @override
   String toString() {
     return 'LcovLine{lineNumber: $lineNumber, lineContent: $lineContent, isLineCovered: $isLineHit}';
   }
 }
-
 class CoverageLine extends Line {
   CoverageLine({
     required super.lineNumber,

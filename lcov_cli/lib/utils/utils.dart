@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:lcov_cli/models/line.dart';
+
 void exitWithMessage(String message, {int exitCode = 1}) {
   stderr.writeln(message);
   exit(exitCode);
@@ -82,6 +84,7 @@ List<String> get defaultLanguageKeywords {
     'while',
     'with',
     'yield',
+    'list'
   ];
 }
 
@@ -90,4 +93,21 @@ Map<String, String> get defaultSpecialCharSubForHtmlRendrer {
     '>': '&gt;',
     '<': '&lt;',
   };
+}
+
+String cleanContent(String text) {
+    for (final specialChar in defaultSpecialCharSubForHtmlRendrer.entries) {
+      text = text.replaceAll(specialChar.key, specialChar.value);
+    }
+    return text;
+  }
+
+
+String? resolveClassName(Line line) {
+  if(line.isLineHit) return null;
+  if(line.isModified && line.canHitLine) {
+    return  'modified';
+  } else {
+    return 'unmodified';
+  }
 }

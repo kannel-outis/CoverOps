@@ -162,3 +162,67 @@ pre {
     position: absolute;
     right: 10px;
 }
+
+pre {
+    background-color: #2d2d2d;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  .keyword-style {
+    color: #569cd6;
+    font-weight: bold;
+  }
+  .string-style {
+    color: #d69d85;
+  }
+  .number-style {
+    color: #b5cea8;
+  }
+  .comment-style {
+    color: #6a9955;
+    font-style: italic;
+  }
+  .default-style {
+    color: #d4d4d4;
+  }
+
+
+
+  /* /// */
+  
+  /* Capitalized words, usually class names */
+  .capitalized-word-style {
+    color: #1976D2; /* blue */
+    font-weight: bold;
+  }
+  
+  /* Dot notation, like object.property */
+  .dot-notation-style {
+    color: #00ACC1; /* cyan/teal */
+  }
+  
+  /* Opening parenthesis ( */
+  .opening-parenthesis-style {
+    color: #F50057; /* pink */
+    font-weight: bold;
+  }
+  
+  /* Closing parenthesis ) */
+  .closing-parenthesis-style {
+    color: #F50057;
+    font-weight: bold;
+  }
+  
+  /* Opening brace { */
+  .opening-brace-style {
+    color: #FF1744; /* red */
+    font-weight: bold;
+  }
+  
+  /* Closing brace } */
+  .closing-brace-style {
+    color: #FF1744;
+    font-weight: bold;
+  }
+  
