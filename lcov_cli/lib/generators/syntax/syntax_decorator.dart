@@ -10,7 +10,7 @@ import 'package:lcov_cli/utils/utils.dart';
 /// styled HTML spans for syntax highlighting.
 class SyntaxDecorator {
   /// Creates a new [SyntaxDecorator] instance.
-  /// 
+  ///
   /// [content] is the text to be processed.
   /// [rules] is an optional list of syntax rules to apply (defaults to [SyntaxRule.rules]).
   SyntaxDecorator({required this.content, this.rules = SyntaxRule.rules});
@@ -22,7 +22,7 @@ class SyntaxDecorator {
   final String content;
 
   /// Applies the syntax rules to the content and returns the styled HTML output.
-  /// 
+  ///
   /// This method processes the content by:
   /// 1. Finding matches for each syntax rule
   /// 2. Avoiding overlapping matches
@@ -105,30 +105,36 @@ class _StyledSpan {
 /// A decorator class for applying syntax highlighting to test code lines.
 /// This class processes multiple lines of code and applies both syntax highlighting
 /// and coverage/modification styling.
-class TestDecorator {
+class StyleDecorator {
   /// The lines of code to process.
   final List<Line> codeLines;
 
   /// The syntax rules to apply for highlighting.
   final List<SyntaxRule> rules;
 
-  /// Creates a new [TestDecorator] instance.
-  /// 
+  /// Creates a new [StyleDecorator] instance.
+  ///
   /// [codeLines] is the list of code lines to process.
   /// [rules] is an optional list of syntax rules to apply (defaults to [SyntaxRule.rules]).
-  TestDecorator({required this.codeLines, this.rules = SyntaxRule.rules});
+  StyleDecorator({required this.codeLines, this.rules = SyntaxRule.rules});
 
   /// Applies syntax highlighting and styling rules to all code lines.
-  /// 
+  ///
   /// Returns the complete styled HTML output for all processed lines.
   String applyRules() {
     StringBuffer fileContentBuffer = StringBuffer();
     for (final line in codeLines) {
       final syntaxDecorator = SyntaxDecorator(content: line.lineContent, rules: rules);
-      Chain<Line>.builder()
-        ..then(RootChainLink(data: line.copyWith(lineContent: syntaxDecorator.applyRules())))
-        ..then(CoveredStyle(buffer: fileContentBuffer))
-        ..then(ModifiedStyle(buffer: fileContentBuffer))
+      Chain<ChainLinkLine>.builder()
+        ..then(
+          RootChainLink(
+              data: ChainLinkLine(
+            line: line.copyWith(lineContent: syntaxDecorator.applyRules()),
+            buffer: fileContentBuffer,
+          )),
+        )
+        ..then(CoveredStyle())
+        ..then(ModifiedStyle())
         ..build();
     }
 

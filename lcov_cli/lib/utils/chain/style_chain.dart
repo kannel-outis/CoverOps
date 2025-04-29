@@ -2,58 +2,70 @@ import 'package:lcov_cli/generators/tags.dart';
 import 'package:lcov_cli/models/line.dart';
 import 'package:lcov_cli/utils/chain/chain_link.dart';
 
-abstract class StyleChainLink extends ChainLink<Line> {
-  final StringBuffer buffer;
-
-  StyleChainLink({required this.buffer});
-}
-
-class CoveredStyle extends StyleChainLink {
-  CoveredStyle({required super.buffer});
+class CoveredStyle extends ChainLink<ChainLinkLine> {
+  CoveredStyle();
 
   @override
-  void handle(ChainMessage<Line> request, ChainLinkHandler<Line> handler) {
+  void handle(ChainMessage<ChainLinkLine> request, ChainLinkHandler<ChainLinkLine> handler) {
     late final String lineContent;
-    if (request.data!.canHitLine != true) {
-      lineContent = request.data!.lineContent;
-      handler.next(request.of(data: request.data!.copyWith(lineContent: lineContent)));
+    if (request.data!.line.canHitLine != true) {
+      lineContent = request.data!.line.lineContent;
+      handler.next(
+        request.of(
+          data: ChainLinkLine(
+            buffer: request.data!.buffer,
+            line: request.data!.line.copyWith(
+              lineContent: lineContent,
+            ),
+          ),
+        ),
+      );
       return;
     }
-    if (request.data!.isLineHit) {
+    if (request.data!.line.isLineHit) {
       lineContent = SpanTag(
-        content: request.data!.lineContent,
+        content: request.data!.line.lineContent,
         attributes: {'class': 'line-covered'},
       ).build();
     } else {
       lineContent = SpanTag(
-        content: request.data!.lineContent,
+        content: request.data!.line.lineContent,
         attributes: {'class': 'line-missed'},
       ).build();
     }
-    handler.next(request.of(data: request.data!.copyWith(lineContent: lineContent)));
+    handler.next(
+      request.of(
+        data: ChainLinkLine(
+          buffer: request.data!.buffer,
+          line: request.data!.line.copyWith(
+            lineContent: lineContent,
+          ),
+        ),
+      ),
+    );
   }
 }
 
-class ModifiedStyle extends StyleChainLink {
-  ModifiedStyle({required super.buffer});
+class ModifiedStyle extends ChainLink<ChainLinkLine> {
+  ModifiedStyle();
 
   @override
-  void handle(ChainMessage<Line> request, ChainLinkHandler<Line> handler) {
-    late final Line line = request.data!;
+  void handle(ChainMessage<ChainLinkLine> request, ChainLinkHandler<ChainLinkLine> handler) {
+    late final Line line = request.data!.line;
 
     final lineNumber = SpanTag(
       content: '${line.lineNumber.toString()}\t',
       attributes: {'class': line.isModified && line.canHitLine ? 'modified' : 'unmodified'},
     ).build();
-    buffer.write(SpanTag(
+    request.data!.buffer.write(SpanTag(
       content: '$lineNumber: ${line.lineContent}\n',
     ).build());
   }
 }
 
-class StyledLine {
+class ChainLinkLine {
+  final StringBuffer buffer;
   final Line line;
-  final String styledLineContent;
 
-  StyledLine({required this.line, required this.styledLineContent});
+  ChainLinkLine({required this.buffer, required this.line});
 }

@@ -239,7 +239,7 @@ class HtmlFilesGen {
     return PreTag(
       children: [
         CodeTag2(
-          content: '\n${TestDecorator(codeLines: file.codeLines).applyRules()}\n',
+          content: '\n${StyleDecorator(codeLines: file.codeLines).applyRules()}\n',
         ),
       ],
     );

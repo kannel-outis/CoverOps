@@ -102,12 +102,3 @@ String cleanContent(String text) {
     return text;
   }
 
-
-String? resolveClassName(Line line) {
-  if(line.isLineHit) return null;
-  if(line.isModified && line.canHitLine) {
-    return  'modified';
-  } else {
-    return 'unmodified';
-  }
-}
