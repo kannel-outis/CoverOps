@@ -1,7 +1,10 @@
+// ignore_for_file: provide_deprecation_message
+
 import 'dart:io';
 
 import 'package:html_gen/html_gen.dart';
 import 'package:lcov_cli/generators/html_file_helper.dart';
+import 'package:lcov_cli/generators/syntax/syntax_decorator.dart';
 import 'package:lcov_cli/generators/tags.dart';
 import 'package:lcov_cli/models/code_file.dart';
 import 'package:lcov_cli/models/line.dart';
@@ -235,8 +238,8 @@ class HtmlFilesGen {
   PreTag _buildCodeBlock(CodeFile file) {
     return PreTag(
       children: [
-        CodeTag(
-          children: file.codeLines.map((line) => SpanTag(content: wrapLineNumber(line))).toList(),
+        CodeTag2(
+          content: '\n${StyleDecorator(codeLines: file.codeLines).applyRules()}\n',
         ),
       ],
     );
@@ -257,6 +260,7 @@ class HtmlFilesGen {
     );
   }
 
+  @deprecated
   String wrapKeywords(String line) {
     return line.split(' ').map((raw) {
       String word = raw;
@@ -271,6 +275,7 @@ class HtmlFilesGen {
     }).join(' ');
   }
 
+  @deprecated
   String wrapLineNumber(Line line) {
     final lineNumber = SpanTag(
       content: '${line.lineNumber.toString()}\t: ',

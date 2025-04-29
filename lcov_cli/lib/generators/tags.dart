@@ -89,6 +89,13 @@ class CodeTag extends NonSelfClosingTag {
   String get tagName => 'code';
 
 }
+class CodeTag2 extends NonSelfClosingTag {
+  CodeTag2({super.content, super.children, super.attributes});
+  
+  @override
+  String get tagName => 'code';
+
+}
 
 class SectionTag extends NonSelfClosingTag {
   SectionTag({super.attributes, super.children});
