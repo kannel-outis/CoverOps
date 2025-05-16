@@ -16,6 +16,29 @@ CoverOps is a powerful, cross-platform CLI tool that helps you track test covera
 
 ---
 
+## 📸 What It Looks Like
+
+CoverOps highlights what’s tested — and what’s not — in your changed code.
+
+![Screenshot 2025-05-16 at 12 37 14 PM](https://github.com/user-attachments/assets/0349bb90-f02d-4aac-b7ac-953e6210bf21)
+![Screenshot 2025-05-16 at 12 36 41 PM](https://github.com/user-attachments/assets/f71695ff-9e7c-4ca6-8522-5c91c2098780)
+<video src='https://github.com/user-attachments/assets/54bfbeb0-9de4-4607-875e-ea3c9073bb3f' width=180/>
+
+
+
+
+> ✅ **Green** = Covered lines in changed code
+> ❌ **Red** = Missed lines in changed code
+> 📄 **Grey** = Unchanged or ignored lines
+
+### Clear, actionable insights:
+
+* Track test coverage of **only new or modified code**.
+* Works across languages (Dart, Python, JS, etc.).
+* Easy-to-read, linkable **HTML reports**.
+
+---
+
 ## Table of Contents
 
 * [Quick Start](#quick-start)
@@ -98,9 +121,7 @@ This will:
 * Build the `cover` binary using Dart,
 * Set up your `bin/` directory for easy access.
 
-
-Make sure the Dart SDK is installed and in your `PATH`. Check out the dart home page to get started: [https://dart.dev/get-dart](https://dart.dev/get-dart)
-*Follow Option 1 for installation instructions when done.*
+Make sure the Dart SDK is installed and in your `PATH`. Get it here: [https://dart.dev/get-dart](https://dart.dev/get-dart)
 
 ---
 
