@@ -148,7 +148,7 @@ class MainRunnerCommand extends Command<int> {
   String get description => 'Combined Git and LCOV analysis tool - Executes both git change analysis and code coverage processing in sequence';
 
   @override
-  String get name => 'run';
+  String get name => 'report';
 
   @override
   FutureOr<int>? run() async {

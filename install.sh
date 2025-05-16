@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
-# The directory where your tool lives
+# directories
 TOOL_DIR="$(cd "$(dirname "$0")" && pwd)/bin"
-TOOL_NAME="cover_ops" # Base name for the tool
-DART_FILE="$(cd "$(dirname "$0")" && pwd)/bin/cover_ops.dart" # Path to Dart source file
+TOOL_NAME="cover" # Base name
+DART_FILE="$(cd "$(dirname "$0")" && pwd)/bin/cover_ops.dart" # Path to source file
 
 # Normalize current platform name
 current_platform="$(uname | tr '[:upper:]' '[:lower:]')"
@@ -53,16 +53,27 @@ build_dart() {
     if [[ "$target_platform" == "windows" ]]; then
         output_name="$TOOL_NAME.exe"
         # Windows: Compile to .exe
-        dart compile exe "$DART_FILE" -o "$TOOL_DIR/$output_name"
+        dart compile exe "$DART_FILE" -o "$TOOL_DIR/$output_name" --target-os=windows
         if [[ $? -eq 0 ]]; then
             echo "✅ Built $output_name in $TOOL_DIR"
         else
             echo "❌ Failed to build $output_name"
             return 1
         fi
-    elif [[ "$target_platform" == "darwin" || "$target_platform" == "linux" ]]; then
-        # macOS or Linux: Compile to AOT snapshot
-        dart compile aot-snapshot "$DART_FILE" -o "$TOOL_DIR/$output_name"
+    elif [[ "$target_platform" == "linux" ]]; then
+        # Linux: Compile executable
+        dart compile exe "$DART_FILE" -o "$TOOL_DIR/$output_name" --target-os=linux
+        if [[ $? -eq 0 ]]; then
+            # Make the output executable
+            chmod +x "$TOOL_DIR/$output_name"
+            echo "✅ Built $output_name in $TOOL_DIR"
+        else
+            echo "❌ Failed to build $output_name"
+            return 1
+        fi
+    elif [[ "$target_platform" == "macos" ]]; then
+        # macOS Compile executable
+        dart compile exe "$DART_FILE" -o "$TOOL_DIR/$output_name" --target-os=macos
         if [[ $? -eq 0 ]]; then
             # Make the output executable
             chmod +x "$TOOL_DIR/$output_name"
@@ -93,8 +104,8 @@ if [[ "$1" == "--build" ]]; then
 
     # Validate and build for each platform
     for platform in "${platforms[@]}"; do
-        if [[ "$platform" != "linux" && "$platform" != "darwin" && "$platform" != "windows" ]]; then
-            echo "❌ Invalid platform: $platform. Supported: linux, darwin, windows"
+        if [[ "$platform" != "linux" && "$platform" != "macos" && "$platform" != "windows" ]]; then
+            echo "❌ Invalid platform: $platform. Supported: linux, macos, windows"
             exit 1
         fi
         build_dart "$platform"
@@ -106,12 +117,12 @@ if [[ "$1" == "--build" ]]; then
     echo "🚀 You can now run your tool using: $TOOL_NAME"
 else
     # Determine shell profile file
-    if [[ "$current_platform" == "darwin" || "$current_platform" == "linux" ]]; then
+    if [[ "$current_platform" == "macos" || "$current_platform" == "linux" ]]; then
         # macOS or Linux
         if [[ -n "$ZSH_VERSION" ]]; then
             PROFILE_FILE="$HOME/.zshrc"
         elif [[ -n "$BASH_VERSION" ]]; then
-            PROFILE_FILE="$HOME/.bashrc"
+            PROFILE_FILE="$HOME/.bash_profile"
         else
             PROFILE_FILE="$HOME/.profile"
         fi
