@@ -1,6 +1,6 @@
 # CoverOps 🚀
 
-**Spot untested code like a pro with CoverOps — your go-to coverage companion for any Git-based project.**
+**Spot untested code like a pro with CoverOps — your go-to coverage companion for any project.**
 
 CoverOps is a powerful, cross-platform CLI tool that helps you track test coverage on new or modified code. By combining Git diffs with LCOV or JSON coverage reports, it generates insightful HTML reports that highlight what’s tested — and what’s not. Whether you’re building in Dart, Python, JavaScript, or anything else, CoverOps keeps your code accountable and clean.
 
@@ -12,7 +12,7 @@ CoverOps is a powerful, cross-platform CLI tool that helps you track test covera
 * 🔎 **Cross-language Coverage** – Supports any project using Git with LCOV or JSON coverage files.
 * 🌐 **Visual Reports** – Generates clean, browsable HTML reports.
 * ⚡ **Lightweight & Fast** – Built with performance in mind.
-* 🧩 **Plug & Play** – Use it directly or integrate into your CI pipeline.
+* 🧩 **Plug & Play** – Use it directly or integrate into your CI pipeline. *(coming soon)*
 
 ---
 
@@ -38,7 +38,7 @@ git clone https://github.com/kannel-outis/CoverOps.git
 cd CoverOps
 
 # Run coverage analysis
-coverops run --lcov coverage/lcov.info --target-branch main --source-branch HEAD --output coverage
+bin/cover_ops.dart run --lcov coverage/lcov.info --target-branch main --source-branch HEAD --output coverage
 
 # Open the report
 open file://$(pwd)/coverage/lcov_html/index.html
@@ -50,7 +50,7 @@ open file://$(pwd)/coverage/lcov_html/index.html
 
 * **Git**: Required to detect changed files.
 * **Coverage File**: LCOV (`lcov.info`) or JSON (`coverage-final.json`) from tools like `lcov`, `coverage.py`, or `jest`.
-* **Optional – Dart SDK**: Only if you want to run it via `dart run`. Not required when using platform executables in `bin/`.
+* **Optional – Dart SDK**: Only if you want to run it via `dart run`. Not required when using platform executables in [`bin/`](https://github.com/kannel-outis/CoverOps/tree/main/bin).
 
 ---
 
@@ -58,17 +58,17 @@ open file://$(pwd)/coverage/lcov_html/index.html
 
 ### 🔧 Option 1: Use Prebuilt Executable (No Dart Required)
 
-If your `bin/` folder already contains the appropriate `coverops` binary for your platform, just run:
+If your `bin/` folder already contains the appropriate `cover` binary for your platform, just run:
 
 ```bash
-./install.sh
+./install.sh # or (bash ./install.sh or zsh ./install.sh) to specify shell
 ```
 
 This will:
 
 * Ensure the `bin/` folder exists,
 * Add it to your shell’s PATH (e.g., `.bashrc`, `.zshrc`, `.bash_profile`),
-* Let you run `coverops` from anywhere in your terminal.
+* Let you run `cover` from anywhere in your terminal.
 
 After that, reload your shell:
 
@@ -79,7 +79,7 @@ source ~/.bashrc   # or ~/.zshrc or ~/.bash_profile
 Now you can run:
 
 ```bash
-coverops --help
+cover --help # or cover -h
 ```
 
 ---
@@ -95,16 +95,12 @@ Want to build from source? Run:
 This will:
 
 * Detect your OS (Linux, macOS, or Windows),
-* Build the `coverops` binary using Dart,
+* Build the `cover` binary using Dart,
 * Set up your `bin/` directory for easy access.
 
-To build for multiple platforms:
 
-```bash
-./install.sh --build linux windows macos
-```
-
-Make sure the Dart SDK is installed and in your `PATH`. Get it from: [https://dart.dev/get-dart](https://dart.dev/get-dart)
+Make sure the Dart SDK is installed and in your `PATH`. Check out the dart home page to get started: [https://dart.dev/get-dart](https://dart.dev/get-dart)
+*Follow Option 1 for installation instructions when done.*
 
 ---
 
@@ -115,7 +111,7 @@ Make sure the Dart SDK is installed and in your `PATH`. Get it from: [https://da
 Analyze code changes between branches.
 
 ```bash
-coverops git --target-branch main --source-branch feature-branch --output-dir coverage
+cover git --target-branch main --source-branch feature-branch --output-dir coverage
 ```
 
 ### `lcov`
@@ -123,7 +119,7 @@ coverops git --target-branch main --source-branch feature-branch --output-dir co
 Process LCOV or JSON coverage files and match against Git diff data.
 
 ```bash
-coverops lcov --lcov coverage/lcov.info --gitParserFile coverage/.gitparser.json --output coverage
+cover lcov --lcov coverage/lcov.info --gitParserFile coverage/.gitparser.json --output coverage
 ```
 
 ### `run`
@@ -131,7 +127,7 @@ coverops lcov --lcov coverage/lcov.info --gitParserFile coverage/.gitparser.json
 Runs both `git` and `lcov` commands in one go.
 
 ```bash
-coverops run --lcov coverage/lcov.info --target-branch main --source-branch feature-branch --output coverage
+cover report --lcov coverage/lcov.info --target-branch main --source-branch feature-branch --output coverage
 ```
 
 ---
@@ -145,21 +141,21 @@ For different project types:
 ```bash
 flutter test --coverage
 lcov --remove coverage/lcov.info '*.g.dart' '*.part.dart' -o coverage/lcov.info
-coverops run --lcov coverage/lcov.info --target-branch main --output coverage
+cover report --lcov coverage/lcov.info --target-branch main --output coverage
 ```
 
 ### Python
 
 ```bash
 pytest --cov=src --cov-report=lcov:coverage/lcov.info
-coverops run --lcov coverage/lcov.info --target-branch main --output coverage
+cover report --lcov coverage/lcov.info --target-branch main --output coverage
 ```
 
 ### JavaScript
 
 ```bash
 jest --coverage --coverageReporters=json
-coverops run --json coverage/coverage-final.json --target-branch main --output coverage
+cover report --json coverage/coverage-final.json --target-branch main --output coverage
 ```
 
 ---
@@ -184,7 +180,7 @@ echo "Run your test suite and generate LCOV/JSON coverage..."
 # Example: pytest --cov=src --cov-report=lcov:coverage/lcov.info
 
 # Run CoverOps
-coverops run --lcov coverage/lcov.info --target-branch main --source-branch HEAD --output coverage
+cover report --lcov coverage/lcov.info --target-branch main --source-branch HEAD --output coverage
 
 # Open the HTML report
 report_path="coverage/lcov_html/index.html"
