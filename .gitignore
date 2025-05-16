@@ -11,4 +11,5 @@ bin/cover
 #project specific
 coverage/
 sample/
+.DS_Store
 todo.txt
