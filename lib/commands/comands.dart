@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' hide Process;
+import 'package:process/process.dart';
 
 import 'package:args/command_runner.dart';
 import 'package:cover_ops/utils/utils.dart';
@@ -38,7 +39,7 @@ class GitCliCommand extends Command<int> {
     final outputDir = argResults?[_output] as String?;
     final projectPath = argResults?[_projectPathKey] as String?;
 
-    final result = await Process.start(
+    final result = await Process.instance.start(
       'dart',
       [
         '${Utils.root}/git_parser_cli/bin/git_parser_cli.dart',
@@ -95,7 +96,7 @@ class LcovCliCommand extends Command<int> {
     final outputDir = argResults?[_output] as String?;
     final projectPath = argResults?[_projectPathKey] as String?;
     final gitParserFile = argResults?[_gitParserFileKey] as String?;
-    final result = await Process.start(
+    final result = await Process.instance.start(
       'dart',
       [
         '${Utils.root}/lcov_cli/bin/lcov_cli.dart',

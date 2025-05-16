@@ -1,6 +1,7 @@
 name: cover_ops
 description: A sample command-line application.
 version: 1.0.0
+publish_to: 'none'
 
 environment:
   sdk: ^3.5.3
@@ -8,6 +9,9 @@ environment:
 dependencies:
   args: '^2.4.2'
   dcli: any
+  process:
+    git:
+      url: https://github.com/kannel-outis/process.git
 
 dev_dependencies:
   lints: ^4.0.0
