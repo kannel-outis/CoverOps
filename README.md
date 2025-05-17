@@ -20,8 +20,7 @@ CoverOps is a powerful, cross-platform CLI tool that helps you track test covera
 
 CoverOps highlights what’s tested — and what’s not — in your changed code.
 
-![Screenshot 2025-05-16 at 12 37 14 PM](https://github.com/user-attachments/assets/0349bb90-f02d-4aac-b7ac-953e6210bf21)
-![Screenshot 2025-05-16 at 12 36 41 PM](https://github.com/user-attachments/assets/f71695ff-9e7c-4ca6-8522-5c91c2098780)
+![Screenshot 2025-05-17 at 9 30 28 PM](https://github.com/user-attachments/assets/16cca79b-dbd1-4847-beca-175f0aa6be4a)
 <video src='https://github.com/user-attachments/assets/54bfbeb0-9de4-4607-875e-ea3c9073bb3f' width=180/>
 
 
