@@ -17,6 +17,13 @@ Designed to work with **any programming language or project** — as long as cov
 
 ---
 
+## 📸 Output Sample
+
+![Screenshot 2025-05-17 at 9 30 28 PM](https://github.com/user-attachments/assets/16cca79b-dbd1-4847-beca-175f0aa6be4a)
+<video src='https://github.com/user-attachments/assets/54bfbeb0-9de4-4607-875e-ea3c9073bb3f' width=180/>
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
