@@ -21,17 +21,26 @@ const _configFile = 'config';
 
 class GitCliCommand extends Command<int> {
   GitCliCommand() {
-    argParser
-      ..addOption(_targetBranchFallbackKey,
-          abbr: _targetBranchFallbackKey.split('').first,
-          defaultsTo: 'main',
-          help: 'Fallback branch if target branch is not found. This branch will be used if the specified target branch does not exist.')
-      ..addOption(_targetBranchKey,
-          abbr: _targetBranchKey.split('').first, defaultsTo: 'master', help: 'Target branch for comparison. This is the branch against which the source branch will be compared for changes.')
-      ..addOption(_sourceBranchKey,
-          abbr: _sourceBranchKey.split('').first, defaultsTo: 'HEAD', help: 'Source branch for comparison. This branch contains the changes that will be analyzed against the target branch.')
-      ..addOption(_outputDir, abbr: _output.split('').first, help: 'Path to the output directory where the analysis results will be saved.')
-      ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory that contains the source code to be analyzed.');
+    addArgParser();
+  }
+
+  void addArgParser() {
+    try {
+      argParser
+        ..addOption(_targetBranchFallbackKey,
+            abbr: _targetBranchFallbackKey.split('').first,
+            defaultsTo: 'main',
+            help: 'Fallback branch if target branch is not found. This branch will be used if the specified target branch does not exist.')
+        ..addOption(_targetBranchKey,
+            abbr: _targetBranchKey.split('').first, defaultsTo: 'master', help: 'Target branch for comparison. This is the branch against which the source branch will be compared for changes.')
+        ..addOption(_sourceBranchKey,
+            abbr: _sourceBranchKey.split('').first, defaultsTo: 'HEAD', help: 'Source branch for comparison. This branch contains the changes that will be analyzed against the target branch.')
+        ..addOption(_outputDir, abbr: _output.split('').first, help: 'Path to the output directory where the analysis results will be saved.')
+        ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory that contains the source code to be analyzed.');
+    } catch (e) {
+      Logger.error(e);
+      exit(-1);
+    }
   }
 
   @override
@@ -42,54 +51,69 @@ class GitCliCommand extends Command<int> {
 
   @override
   FutureOr<int>? run() async {
-    final targetBranch = argResults?[_targetBranchKey] as String?;
-    final targetBranchFallback = argResults?[_targetBranchFallbackKey] as String?;
-    final sourceBranch = argResults?[_sourceBranchKey] as String?;
-    final outputDir = argResults?[_outputDir] as String?;
-    final projectPath = argResults?[_projectPathKey] as String?;
+    try {
+      final config = Config.fromArgs(argResults);
+      final targetBranch = config.targetBranch;
+      final targetBranchFallback = config.targetBranchFallback;
+      final sourceBranch = config.sourceBranch;
+      final outputDir = config.output;
+      final projectPath = config.projectPath;
 
-    final result = await Process.instance.start(
-      'dart',
-      [
-        '${Utils.root}/git_parser_cli/bin/git_parser_cli.dart',
-        if (targetBranch != null) ...[
-          '--target-branch',
-          targetBranch,
+      final result = await Process.instance.start(
+        'dart',
+        [
+          '${Utils.root}/git_parser_cli/bin/git_parser_cli.dart',
+          if (targetBranch != null) ...[
+            '--target-branch',
+            targetBranch,
+          ],
+          if (targetBranchFallback != null) ...[
+            '--fallback',
+            targetBranchFallback,
+          ],
+          if (sourceBranch != null) ...[
+            '--source-branch',
+            sourceBranch,
+          ],
+          if (outputDir != null) ...[
+            '--output-dir',
+            outputDir,
+          ],
+          if (projectPath != null) ...[
+            '--project-dir',
+            projectPath,
+          ]
         ],
-        if (targetBranchFallback != null) ...[
-          '--fallback',
-          targetBranchFallback,
-        ],
-        if (sourceBranch != null) ...[
-          '--source-branch',
-          sourceBranch,
-        ],
-        if (outputDir != null) ...[
-          '--output-dir',
-          outputDir,
-        ],
-        if (projectPath != null) ...[
-          '--project-dir',
-          projectPath,
-        ]
-      ],
-      runInShell: true,
-    );
-    result.stdout.transform(utf8.decoder).listen(stdout.write);
-    result.stderr.transform(utf8.decoder).listen(stderr.write);
+        runInShell: true,
+      );
+      result.stdout.transform(utf8.decoder).listen(stdout.write);
+      result.stderr.transform(utf8.decoder).listen(stderr.write);
 
-    return await result.exitCode;
+      return await result.exitCode;
+    } catch (e) {
+      Logger.error(e);
+      return 1;
+    }
   }
 }
 
 class LcovCliCommand extends Command<int> {
   LcovCliCommand() {
-    argParser
-      ..addOption(_lcovFileKey, abbr: _lcovFileKey.split('').first, help: 'Path to the LCOV file containing code coverage data in LCOV format')
-      ..addOption(_jsonCoverageKey, abbr: _jsonCoverageKey.split('').first, help: 'Path to the JSON coverage file containing code coverage data in JSON format')
-      ..addOption(_output, abbr: _output.split('').first, help: 'Path to the output directory where the processed coverage reports will be saved')
-      ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory containing the source code for coverage analysis')
-      ..addOption(_gitParserFileKey, abbr: _gitParserFileKey.split('').first, help: 'Path to the git parser file containing git change analysis results');
+    addArgParser();
+  }
+
+  void addArgParser() {
+    try {
+      argParser
+        ..addOption(_lcovFileKey, abbr: _lcovFileKey.split('').first, help: 'Path to the LCOV file containing code coverage data in LCOV format')
+        ..addOption(_jsonCoverageKey, abbr: _jsonCoverageKey.split('').first, help: 'Path to the JSON coverage file containing code coverage data in JSON format')
+        ..addOption(_output, abbr: _output.split('').first, help: 'Path to the output directory where the processed coverage reports will be saved')
+        ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory containing the source code for coverage analysis')
+        ..addOption(_gitParserFileKey, abbr: _gitParserFileKey.split('').first, help: 'Path to the git parser file containing git change analysis results');
+    } catch (e) {
+      Logger.error(e);
+      exit(-1);
+    }
   }
 
   @override
@@ -100,41 +124,47 @@ class LcovCliCommand extends Command<int> {
 
   @override
   FutureOr<int>? run() async {
-    final lcovFile = argResults?[_lcovFileKey] as String?;
-    final jsonFile = argResults?[_jsonCoverageKey] as String?;
-    final outputDir = argResults?[_output] as String?;
-    final projectPath = argResults?[_projectPathKey] as String?;
-    final gitParserFile = argResults?[_gitParserFileKey] as String?;
-    final result = await Process.instance.start(
-      'dart',
-      [
-        '${Utils.root}/lcov_cli/bin/lcov_cli.dart',
-        if (lcovFile != null) ...[
-          '--lcov',
-          lcovFile,
+    try {
+      final config = Config.fromArgs(argResults);
+      final lcovFile = config.lcovFile;
+      final jsonFile = config.jsonCoverage;
+      final outputDir = config.output;
+      final projectPath = config.projectPath;
+      final gitParserFile = config.gitParserFile;
+      final result = await Process.instance.start(
+        'dart',
+        [
+          '${Utils.root}/lcov_cli/bin/lcov_cli.dart',
+          if (lcovFile != null) ...[
+            '--lcov',
+            lcovFile,
+          ],
+          if (jsonFile != null) ...[
+            '--json',
+            jsonFile,
+          ],
+          if (outputDir != null) ...[
+            '--output',
+            outputDir,
+          ],
+          if (projectPath != null) ...[
+            '--projectPath',
+            projectPath,
+          ],
+          if (gitParserFile != null) ...[
+            '--gitParserFile',
+            gitParserFile,
+          ],
         ],
-        if (jsonFile != null) ...[
-          '--json',
-          jsonFile,
-        ],
-        if (outputDir != null) ...[
-          '--output',
-          outputDir,
-        ],
-        if (projectPath != null) ...[
-          '--projectPath',
-          projectPath,
-        ],
-        if (gitParserFile != null) ...[
-          '--gitParserFile',
-          gitParserFile,
-        ],
-      ],
-      runInShell: true,
-    );
-    result.stdout.transform(utf8.decoder).listen(stdout.write);
-    result.stderr.transform(utf8.decoder).listen(stderr.write);
-    return await result.exitCode;
+        runInShell: true,
+      );
+      result.stdout.transform(utf8.decoder).listen(stdout.write);
+      result.stderr.transform(utf8.decoder).listen(stderr.write);
+      return await result.exitCode;
+    } catch (e) {
+      Logger.error(e);
+      exit(-1);
+    }
   }
 }
 

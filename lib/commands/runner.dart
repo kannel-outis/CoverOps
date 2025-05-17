@@ -9,6 +9,10 @@ class CoverOpsRunner extends CommandRunner<int> {
           'cover',
           'Coverage Operations CLI tool for analyzing and processing code coverage data. Supports Git operations, LCOV file handling, and coverage report generation.',
         ) {
+    init();
+  }
+
+  void init() {
     addCommand(GitCliCommand());
     addCommand(LcovCliCommand());
     addCommand(MainRunnerCommand(this));
