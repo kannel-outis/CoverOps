@@ -56,7 +56,7 @@ class ConsoleReportGenerator extends ReportGenerator {
         path.blue,
         file.totalHittableLines.toString().grey,
         file.totalCoveredLines.toString().grey,
-        file.totalModifiedLines.toString().grey,
+        file.totalHittableModifiedLines.toString().grey,
         file.totalHitOnModifiedLines.toString().grey,
         file.totalCoveragePercentage.prettifyPercentage(),
         {

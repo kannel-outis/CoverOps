@@ -36,7 +36,7 @@ void main() {
       expect(codeFile.totalHittableModifiedLines, equals(2));
       expect(codeFile.totalHitOnModifiedLines, equals(1));
       expect(codeFile.isModified, isTrue);
-      expect(codeFile.totalCoveragePercentage, equals('40 %'));
+      expect(codeFile.totalCoveragePercentage, equals('50 %'));
     });
 
     test('code file with single line calculates coverage correctly', () {

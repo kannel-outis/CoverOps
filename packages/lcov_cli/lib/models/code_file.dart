@@ -15,6 +15,6 @@ class CodeFile {
   bool get isModified => totalModifiedLines > 0;
 
   String get totalCoveragePercentage {
-    if (totalCodeLines == 0) return '0 %';
+    if (totalCoveredLines == 0 || (totalCoveredLines == 0 && totalHittableLines == 0)) return '0 %';
     return '${((totalCoveredLines / totalHittableLines) * 100).round()} %';
   }}

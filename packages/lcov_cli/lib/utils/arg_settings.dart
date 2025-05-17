@@ -22,9 +22,10 @@ class ArgumentSettings {
     required this.reportTypes,
   });
 
-  static final _parser = ArgParser();
+  static ArgParser _parser = ArgParser();
 
   factory ArgumentSettings.fromArgs(List<String> args) {
+    _parser = ArgParser();
     const lcovFileKey = 'lcov';
     const jsonCoverageKey = 'json';
     const outputKey = 'output';
@@ -39,7 +40,7 @@ class ArgumentSettings {
       ..addOption(outputKey, abbr: outputKey.split('').first, help: 'Path to the output directory')
       ..addOption(rootProjectPathKey, abbr: rootProjectPathKey.split('').first, help: 'Path to the project')
       ..addOption(gitParserFileKey, abbr: gitParserFileKey.split('').first, help: 'Path to the git parser file')
-      ..addOption(reportType, abbr: reportType.split('').first, defaultsTo: 'console', help: 'Type of report to generate (html, json, console). multiple can be passed seperated by comma')
+      ..addOption(reportType, abbr: reportType.split('').first, defaultsTo: 'html', help: 'Type of report to generate (html, json, console). multiple can be passed seperated by comma')
       ..addOption(flutterProjectKey, abbr: flutterProjectKey.split('').first, defaultsTo: 'false', help: 'Whether or not this is a Flutter project');
 
     final results = _parser.parse(args);
