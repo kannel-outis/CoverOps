@@ -19,6 +19,8 @@ const _outputDir = 'output-dir';
 const _projectPathKey = 'projectPath';
 const _configFile = 'config';
 
+
+//TODO(kanniel-outis): move to git parser package folder
 class GitCliCommand extends Command<int> {
   GitCliCommand() {
     addArgParser();
@@ -36,7 +38,8 @@ class GitCliCommand extends Command<int> {
         ..addOption(_sourceBranchKey,
             abbr: _sourceBranchKey.split('').first, defaultsTo: 'HEAD', help: 'Source branch for comparison. This branch contains the changes that will be analyzed against the target branch.')
         ..addOption(_outputDir, abbr: _output.split('').first, help: 'Path to the output directory where the analysis results will be saved.')
-        ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory that contains the source code to be analyzed.');
+        ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory that contains the source code to be analyzed.')
+        ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the config file containing configuration options for the analysis tool');
     } catch (e) {
       Logger.error(e);
       exit(-1);
@@ -52,7 +55,7 @@ class GitCliCommand extends Command<int> {
   @override
   FutureOr<int>? run() async {
     try {
-      final config = Config.fromArgs(argResults);
+      final config = Config.gitParserfromArgs(argResults);
       final targetBranch = config.targetBranch;
       final targetBranchFallback = config.targetBranchFallback;
       final sourceBranch = config.sourceBranch;
@@ -62,7 +65,7 @@ class GitCliCommand extends Command<int> {
       final result = await Process.instance.start(
         'dart',
         [
-          '${Utils.root}/git_parser_cli/bin/git_parser_cli.dart',
+          '${Utils.root}/packages/git_parser_cli/bin/git_parser_cli.dart',
           if (targetBranch != null) ...[
             '--target-branch',
             targetBranch,
@@ -97,6 +100,7 @@ class GitCliCommand extends Command<int> {
   }
 }
 
+//TODO(kanniel-outis): move to lcov cli package folder
 class LcovCliCommand extends Command<int> {
   LcovCliCommand() {
     addArgParser();
@@ -109,7 +113,8 @@ class LcovCliCommand extends Command<int> {
         ..addOption(_jsonCoverageKey, abbr: _jsonCoverageKey.split('').first, help: 'Path to the JSON coverage file containing code coverage data in JSON format')
         ..addOption(_output, abbr: _output.split('').first, help: 'Path to the output directory where the processed coverage reports will be saved')
         ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory containing the source code for coverage analysis')
-        ..addOption(_gitParserFileKey, abbr: _gitParserFileKey.split('').first, help: 'Path to the git parser file containing git change analysis results');
+        ..addOption(_gitParserFileKey, abbr: _gitParserFileKey.split('').first, help: 'Path to the git parser file containing git change analysis results')
+        ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the config file containing configuration options for the analysis tool');
     } catch (e) {
       Logger.error(e);
       exit(-1);
@@ -125,7 +130,7 @@ class LcovCliCommand extends Command<int> {
   @override
   FutureOr<int>? run() async {
     try {
-      final config = Config.fromArgs(argResults);
+      final config = Config.lcovParserfromArgs(argResults);
       final lcovFile = config.lcovFile;
       final jsonFile = config.jsonCoverage;
       final outputDir = config.output;
@@ -134,7 +139,7 @@ class LcovCliCommand extends Command<int> {
       final result = await Process.instance.start(
         'dart',
         [
-          '${Utils.root}/lcov_cli/bin/lcov_cli.dart',
+          '${Utils.root}/packages/lcov_cli/bin/lcov_cli.dart',
           if (lcovFile != null) ...[
             '--lcov',
             lcovFile,

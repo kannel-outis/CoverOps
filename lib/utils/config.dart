@@ -73,8 +73,8 @@ class Config {
   /// Creates a [Config] instance from command-line arguments.
   ///
   /// This factory constructor merges settings from [args] with those from a JSON
-  /// configuration file specified by the `--config` flag. File-based settings
-  /// take precedence for keys defined in the JSON file.
+  /// configuration file specified by the `--config` flag. For any keys present in
+  /// the JSON file, file-based settings take precedence over the command-line arguments.
   ///
   /// @param args The parsed command-line arguments from [ArgResults].
   /// @return A [Config] instance with merged settings.
@@ -89,6 +89,46 @@ class Config {
       targetBranchFallback: fileConfig?.targetBranchFallback ?? args?[_targetBranchFallbackKey],
       sourceBranch: fileConfig?.sourceBranch ?? args?[_sourceBranchKey],
       output: fileConfig?.output ?? args?[_output] ?? args?[_outputDir],
+      projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
+    );
+  }
+
+  /// Creates a [Config] instance for Git parsing from command-line arguments.
+  ///
+  /// This factory constructor merges settings from [args] with those from a JSON
+  /// configuration file specified by the `--config` flag. File-based settings
+  /// take precedence for keys defined in the JSON file.
+  ///
+  /// @param args The parsed command-line arguments from [ArgResults].
+  /// @return A [Config] instance with merged settings for Git parsing.
+  factory Config.gitParserfromArgs(ArgResults? args) {
+    final configPath = args?[_configFile] as String?;
+    final fileConfig = _FileConfig(configFilePath: configPath).getConfig();
+    return Config(
+      targetBranch: fileConfig?.targetBranch ?? args?[_targetBranchKey],
+      targetBranchFallback: fileConfig?.targetBranchFallback ?? args?[_targetBranchFallbackKey],
+      sourceBranch: fileConfig?.sourceBranch ?? args?[_sourceBranchKey],
+      output: fileConfig?.output ?? args?[_outputDir],
+      projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
+    );
+  }
+
+  /// Creates a [Config] instance for LCOV parsing from command-line arguments.
+  ///
+  /// This factory constructor merges settings from [args] with those from a JSON
+  /// configuration file specified by the `--config` flag. File-based settings
+  /// take precedence for keys defined in the JSON file.
+  ///
+  /// @param args The parsed command-line arguments from [ArgResults].
+  /// @return A [Config] instance with merged settings for LCOV parsing.
+  factory Config.lcovParserfromArgs(ArgResults? args) {
+    final configPath = args?[_configFile] as String?;
+    final fileConfig = _FileConfig(configFilePath: configPath).getConfig();
+    return Config(
+      lcovFile: fileConfig?.lcovFile ?? args?[_lcovFileKey],
+      jsonCoverage: fileConfig?.jsonCoverage ?? args?[_jsonCoverageKey],
+      gitParserFile: fileConfig?.gitParserFile ?? args?[_gitParserFileKey],
+      output: fileConfig?.output ?? args?[_output],
       projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
     );
   }
@@ -139,7 +179,7 @@ class _FileConfig extends Config {
     }
     try {
       final configFile = File(configFilePath!);
-      if(!configFile.existsSync()) {
+      if (!configFile.existsSync()) {
         Logger.log('No config file provided. Using default values.');
         return null;
       }
