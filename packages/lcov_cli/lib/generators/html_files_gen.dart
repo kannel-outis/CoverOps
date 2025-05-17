@@ -1,8 +1,10 @@
 // ignore_for_file: provide_deprecation_message
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:html_gen/html_gen.dart';
+import 'package:lcov_cli/generators/generator.dart';
 import 'package:lcov_cli/generators/html_file_helper.dart';
 import 'package:lcov_cli/generators/syntax/syntax_decorator.dart';
 import 'package:lcov_cli/generators/tags.dart';
@@ -10,12 +12,16 @@ import 'package:lcov_cli/models/code_file.dart';
 import 'package:lcov_cli/models/line.dart';
 import 'package:lcov_cli/utils/utils.dart';
 
-class HtmlFilesGen {
-  final outputRootFolder = 'lcov_html/'; //TODO(kannel-outis): look into this
+class HtmlFilesReportGenerator extends ReportGenerator {
+  HtmlFilesReportGenerator({required super.codeFiles, required super.outputDir}); 
 
-  Future<List<File>> generateHtmlFiles(List<CodeFile> codeFiles, String outputDir, [String? rootPath]) async {
+  Directory get outputDirectory => Directory('${outputDir}lcov_html');
+
+  String get outputRootFolder => 'lcov_html/';
+
+  @override
+  FutureOr<List<File>> generate([String? rootPath]) async {
     final htmlFiles = <File>[];
-    final outputDirectory = Directory('${outputDir}lcov_html');
     final cssFilePath = await HtmlFileHelper.generateCssFile(outputDirectory.absolute.path);
     final stats = await _processFiles(codeFiles, rootPath, outputDirectory, cssFilePath, htmlFiles);
     await _generateIndexPages(

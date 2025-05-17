@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:lcov_cli/models/line.dart';
-
 void exitWithMessage(String message, {int exitCode = 1}) {
   stderr.writeln(message);
   exit(exitCode);
@@ -96,9 +94,13 @@ Map<String, String> get defaultSpecialCharSubForHtmlRendrer {
 }
 
 String cleanContent(String text) {
-    for (final specialChar in defaultSpecialCharSubForHtmlRendrer.entries) {
-      text = text.replaceAll(specialChar.key, specialChar.value);
-    }
-    return text;
+  for (final specialChar in defaultSpecialCharSubForHtmlRendrer.entries) {
+    text = text.replaceAll(specialChar.key, specialChar.value);
   }
+  return text;
+}
 
+String totalCoveragePercentage(int totalCoveredLines, int totalCodeLines) {
+  if (totalCodeLines == 0) return '0 %';
+  return '${((totalCoveredLines / totalCodeLines) * 100).round()} %';
+}
