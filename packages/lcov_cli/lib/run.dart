@@ -1,7 +1,5 @@
 import 'dart:io';
 
-
-import 'package:lcov_cli/generators/html_files_gen.dart';
 import 'package:lcov_cli/lcov_cli.dart';
 import 'package:lcov_cli/parsers/code_coverage_file_parser.dart';
 import 'package:lcov_cli/parsers/json_parser.dart';
@@ -23,13 +21,27 @@ class LcovCli {
 
     if (!parsedProjectDir.existsSync()) exitWithMessage('Cannot find project, please provide a valid project path --> $projectPath');
 
-    await process(coverageFile, Directory(outputDir.orEmpty), settings.parserType, parsedProjectDir.path, settings.gitParserJsonFile?.path,);
+    await process(
+      coverageFile,
+      Directory(outputDir.orEmpty),
+      settings.parserType,
+      parsedProjectDir.path,
+      settings.gitParserJsonFile?.path,
+      settings.reportTypes,
+    );
     stopwatch.stop();
 
     print('Execution time: ${stopwatch.elapsedMilliseconds} ms');
   }
 
-  Future<void> process(File file, Directory outputDir, ParserType type, String? rootPath, String? gitparserFile) async {
+  Future<void> process(
+    File file,
+    Directory outputDir,
+    ParserType type,
+    String? rootPath,
+    String? gitparserFile,
+    List<ReportType> reportTypes,
+  ) async {
     LineParser? gitJsonParser;
     if (gitparserFile != null) {
       gitJsonParser = JsonFileLineParser(File(gitparserFile));
@@ -42,6 +54,9 @@ class LcovCli {
       modifiedCodeFiles: gitJsonParser != null ? await gitJsonParser.parsedLines(rootPath) : null,
     );
     final codeFiles = await totalCodeCoverageParser.parsedLines(rootPath);
-    await HtmlFilesGen().generateHtmlFiles(codeFiles, outputDir.path, rootPath);
+    for (var report in reportTypes) {
+      final generator = report.generator(codeFiles, outputDir.path);
+      await generator.generate(rootPath);
+    }
   }
 }

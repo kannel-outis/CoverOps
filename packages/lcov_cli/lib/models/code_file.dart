@@ -16,5 +16,5 @@ class CodeFile {
 
   String get totalCoveragePercentage {
     if (totalCodeLines == 0) return '0 %';
-    return '${((totalCoveredLines / totalCodeLines) * 100).round()} %';
+    return '${((totalCoveredLines / totalHittableLines) * 100).round()} %';
   }}

@@ -10,6 +10,7 @@ class ArgumentSettings {
   final String? projectPath;
   final bool isFlutterProject;
   final String? gitParserFile;
+  final List<ReportType> reportTypes;
 
   ArgumentSettings({
     this.lcovFile,
@@ -18,6 +19,7 @@ class ArgumentSettings {
     this.projectPath,
     this.gitParserFile,
     this.isFlutterProject = false,
+    required this.reportTypes,
   });
 
   static final _parser = ArgParser();
@@ -29,6 +31,7 @@ class ArgumentSettings {
     final flutterProjectKey = 'flutter';
     final rootProjectPathKey = 'projectPath';
     final gitParserFileKey = 'gitParserFile';
+    final reportType = 'reportType';
 
     _parser
       ..addOption(lcovFileKey, abbr: lcovFileKey.split('').first, help: 'Path to the LCOV file')
@@ -36,6 +39,7 @@ class ArgumentSettings {
       ..addOption(outputKey, abbr: outputKey.split('').first, help: 'Path to the output directory')
       ..addOption(rootProjectPathKey, abbr: rootProjectPathKey.split('').first, help: 'Path to the project')
       ..addOption(gitParserFileKey, abbr: gitParserFileKey.split('').first, help: 'Path to the git parser file')
+      ..addOption(reportType, abbr: reportType.split('').first, defaultsTo: 'console', help: 'Type of report to generate (html, json, console). multiple can be passed seperated by comma')
       ..addOption(flutterProjectKey, abbr: flutterProjectKey.split('').first, defaultsTo: 'false', help: 'Whether or not this is a Flutter project');
 
     final results = _parser.parse(args);
@@ -48,6 +52,7 @@ class ArgumentSettings {
       projectPath: results[rootProjectPathKey] as String?,
       isFlutterProject: results[flutterProjectKey] == 'true',
       gitParserFile: results[gitParserFileKey] as String?,
+      reportTypes: ReportType.fromString(results[reportType] as String?),
     );
   }
 
