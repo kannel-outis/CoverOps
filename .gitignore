@@ -13,3 +13,6 @@ coverage/
 sample/
 .DS_Store
 todo.txt
+pubspec.lock
+config.json
+build/
