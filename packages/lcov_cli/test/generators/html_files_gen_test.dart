@@ -8,12 +8,12 @@ import 'package:lcov_cli/models/line.dart';
 
 void main() {
   group('HtmlFilesGen', () {
-    late HtmlFilesGen generator;
+    late HtmlFilesReportGenerator generator;
     late Directory tempDir;
     late File testFile;
 
     setUp(() {
-      generator = HtmlFilesGen();
+      generator = HtmlFilesReportGenerator(codeFiles: [], outputDir: '');
       tempDir = Directory.systemTemp.createTempSync('html_files_gen_test_');
       testFile = File('${tempDir.path}/test.dart');
       testFile.writeAsStringSync('line1\nline2\nline3\n');
@@ -75,8 +75,9 @@ void main() {
         )
       ];
       print(tempOutputDir.path);
+      final generator = HtmlFilesReportGenerator(codeFiles: codeFiles, outputDir: "${tempOutputDir.path}/");
 
-      final htmlFiles = await generator.generateHtmlFiles(codeFiles, "${tempOutputDir.path}/");
+      final htmlFiles = await generator.generate();
 
       expect(htmlFiles, isNotEmpty);
       expect(Directory('${tempOutputDir.path}/lcov_html').existsSync(), isTrue);
@@ -90,7 +91,8 @@ void main() {
 
     test('generateHtmlFiles handles empty code files list', () async {
       final tempOutputDir = Directory.systemTemp.createTempSync('html_files_gen_empty_');
-      final htmlFiles = await generator.generateHtmlFiles([], tempOutputDir.path);
+      final generator = HtmlFilesReportGenerator(codeFiles: [], outputDir: tempOutputDir.path);
+      final htmlFiles = await generator.generate();
 
       expect(htmlFiles, isEmpty);
       expect(Directory('${tempOutputDir.path}lcov_html').existsSync(), isTrue);
@@ -107,8 +109,9 @@ void main() {
           codeLines: [Line(lineNumber: 1, lineContent: 'test', isLineHit: true, canHitLine: true)],
         )
       ];
+      final generator = HtmlFilesReportGenerator(codeFiles: codeFiles, outputDir: tempOutputDir.path);
 
-      final htmlFiles = await generator.generateHtmlFiles(codeFiles, tempOutputDir.path, rootPath);
+      final htmlFiles = await generator.generate(rootPath);
 
       expect(htmlFiles, isNotEmpty);
       expect(htmlFiles.first.path, contains('${tempOutputDir.path}lcov_html/lib/file.dart.html'));
@@ -125,7 +128,9 @@ void main() {
         )
       ];
 
-      await generator.generateHtmlFiles(codeFiles, tempOutputDir.path);
+      final generator = HtmlFilesReportGenerator(codeFiles: codeFiles, outputDir: tempOutputDir.path);
+
+      await generator.generate();
 
       expect(File('${tempOutputDir.path}lcov_html/lib/index.html').existsSync(), isTrue);
       expect(File('${tempOutputDir.path}lcov_html/lib/nested/index.html').existsSync(), isTrue);

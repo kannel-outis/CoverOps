@@ -1,6 +1,9 @@
 import 'dart:io';
 
-import 'package:lcov_cli/models/line.dart';
+import 'package:dcli/dcli.dart' as dcli;
+import 'package:lcov_cli/generators/generator.dart';
+import 'package:lcov_cli/lcov_cli.dart';
+import 'package:lcov_cli/models/code_file.dart';
 
 void exitWithMessage(String message, {int exitCode = 1}) {
   stderr.writeln(message);
@@ -17,6 +20,24 @@ extension OrEmpty on String? {
   String get orEmpty {
     return this == null ? '' : this!;
   }
+}
+
+extension StringEx on String {
+  String prettifyPercentage([double targetCoverage = 80.0]) {
+    final percentage = double.tryParse(split(' ').first) ?? 0.0;
+    final colored = '$percentage %';
+    return percentage >= targetCoverage
+        ? colored.green
+        : percentage >= targetCoverage - 15
+            ? colored.yellow
+            : colored.red;
+  }
+
+  String get blue => dcli.blue(this);
+  String get yellow => dcli.yellow(this);
+  String get red => dcli.red(this);
+  String get grey => dcli.grey(this);
+  String get green => dcli.green(this);
 }
 
 List<String> get defaultLanguageKeywords {
@@ -96,9 +117,23 @@ Map<String, String> get defaultSpecialCharSubForHtmlRendrer {
 }
 
 String cleanContent(String text) {
-    for (final specialChar in defaultSpecialCharSubForHtmlRendrer.entries) {
-      text = text.replaceAll(specialChar.key, specialChar.value);
-    }
-    return text;
+  for (final specialChar in defaultSpecialCharSubForHtmlRendrer.entries) {
+    text = text.replaceAll(specialChar.key, specialChar.value);
   }
+  return text;
+}
 
+String totalCoveragePercentage(int totalCoveredLines, int totalCodeLines) {
+  if (totalCodeLines == 0) return '0 %';
+  return '${((totalCoveredLines / totalCodeLines) * 100).round()} %';
+}
+
+extension ReportTypeEx on ReportType {
+  ReportGenerator generator(List<CodeFile> codeFiles, String outputDir) {
+    return ReportGenerator.ofType(
+      type: this,
+      codeFiles: codeFiles,
+      outputDir: outputDir,
+    );
+  }
+}
