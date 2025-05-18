@@ -16,6 +16,7 @@ const _output = 'output';
 const _outputDir = 'output-dir';
 const _projectPathKey = 'projectPath';
 const _configFile = 'config';
+const _reportFormat = 'report-format';
 
 /// Stores configuration options for the CoverOps CLI tool.
 ///
@@ -47,18 +48,23 @@ class Config {
   /// Project root directory path.
   final String? projectPath;
 
+  /// Report format (e.g., `html`, `json`, `console`).
+  final String? reportFormat;
+
   /// Creates a [Config] instance with the specified options.
   ///
   /// All parameters are optional and can be null if not specified.
   ///
-  /// @param lcovFile Path to the LCOV coverage file.
-  /// @param jsonCoverage Path to the JSON coverage file.
-  /// @param gitParserFile Path to the Git analysis results file.
-  /// @param targetBranch Target branch for Git comparison.
-  /// @param targetBranchFallback Fallback branch if target is unavailable.
-  /// @param sourceBranch Source branch with changes.
-  /// @param output Output directory for reports.
-  /// @param projectPath Project root directory.
+  /// Parameters:
+  ///  - `lcovFile` Path to the LCOV coverage file.
+  ///  - `jsonCoverage` Path to the JSON coverage file.
+  ///  - `gitParserFile` Path to the Git analysis results file.
+  ///  - `targetBranch` Target branch for Git comparison.
+  ///  - `targetBranchFallback` Fallback branch if target is unavailable.
+  ///  - `sourceBranch` Source branch with changes.
+  ///  - `output` Output directory for reports.
+  ///  - `projectPath` Project root directory.
+  ///  - `reportFormat` Report format (e.g., `html`, `json`, `console`).
   Config({
     this.lcovFile,
     this.jsonCoverage,
@@ -68,6 +74,7 @@ class Config {
     this.sourceBranch,
     this.output,
     this.projectPath,
+    this.reportFormat,
   });
 
   /// Creates a [Config] instance from command-line arguments.
@@ -76,8 +83,9 @@ class Config {
   /// configuration file specified by the `--config` flag. For any keys present in
   /// the JSON file, file-based settings take precedence over the command-line arguments.
   ///
-  /// @param args The parsed command-line arguments from [ArgResults].
-  /// @return A [Config] instance with merged settings.
+  /// Parameters:
+  ///   - `args` The parsed command-line arguments from [ArgResults].
+  /// returns A [Config] instance with merged settings.
   factory Config.fromArgs(ArgResults? args) {
     final configPath = args?[_configFile] as String?;
     final fileConfig = _FileConfig(configFilePath: configPath).getConfig();
@@ -90,6 +98,7 @@ class Config {
       sourceBranch: fileConfig?.sourceBranch ?? args?[_sourceBranchKey],
       output: fileConfig?.output ?? args?[_output] ?? args?[_outputDir],
       projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
+      reportFormat: fileConfig?.reportFormat ?? args?[_reportFormat],
     );
   }
 
@@ -99,8 +108,9 @@ class Config {
   /// configuration file specified by the `--config` flag. File-based settings
   /// take precedence for keys defined in the JSON file.
   ///
-  /// @param args The parsed command-line arguments from [ArgResults].
-  /// @return A [Config] instance with merged settings for Git parsing.
+  /// Parameters:
+  ///   - `args` The parsed command-line arguments from [ArgResults].
+  /// returns A [Config] instance with merged settings for Git parsing.
   factory Config.gitParserfromArgs(ArgResults? args) {
     final configPath = args?[_configFile] as String?;
     final fileConfig = _FileConfig(configFilePath: configPath).getConfig();
@@ -119,8 +129,9 @@ class Config {
   /// configuration file specified by the `--config` flag. File-based settings
   /// take precedence for keys defined in the JSON file.
   ///
-  /// @param args The parsed command-line arguments from [ArgResults].
-  /// @return A [Config] instance with merged settings for LCOV parsing.
+  /// Parameters:
+  ///   - `args` The parsed command-line arguments from [ArgResults].
+  /// returns A [Config] instance with merged settings for LCOV parsing.
   factory Config.lcovParserfromArgs(ArgResults? args) {
     final configPath = args?[_configFile] as String?;
     final fileConfig = _FileConfig(configFilePath: configPath).getConfig();
@@ -130,6 +141,7 @@ class Config {
       gitParserFile: fileConfig?.gitParserFile ?? args?[_gitParserFileKey],
       output: fileConfig?.output ?? args?[_output],
       projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
+      reportFormat: fileConfig?.reportFormat ?? args?[_reportFormat],
     );
   }
 
@@ -194,6 +206,7 @@ class _FileConfig extends Config {
         sourceBranch: args[_sourceBranchKey.toCamelCase],
         output: args[_output],
         projectPath: args[_projectPathKey],
+        reportFormat: (args[_reportFormat.toCamelCase] as List<dynamic>?)?.join(','),
       );
     } catch (e) {
       Logger.error(e);

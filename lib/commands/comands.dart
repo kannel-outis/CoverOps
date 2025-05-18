@@ -136,6 +136,7 @@ class LcovCliCommand extends Command<int> {
       final outputDir = config.output;
       final projectPath = config.projectPath;
       final gitParserFile = config.gitParserFile;
+      final reportFormat = config.reportFormat;
       final result = await Process.instance.start(
         'dart',
         [
@@ -160,6 +161,10 @@ class LcovCliCommand extends Command<int> {
             '--gitParserFile',
             gitParserFile,
           ],
+          if (reportFormat != null) ...[
+            '--reportType',
+            reportFormat,
+          ]
         ],
         runInShell: true,
       );
@@ -255,6 +260,10 @@ class MainRunnerCommand extends Command<int> {
           '--gitParserFile',
           config.gitParserFile!,
         ],
+         if (config.reportFormat != null) ...[
+          '--reportType',
+          config.reportFormat!,
+        ]
       ];
 
       await main.run(['git', ...gitOptions]);
