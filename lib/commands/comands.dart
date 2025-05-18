@@ -27,6 +27,8 @@ class GitCliCommand extends Command<int> {
     addArgParser();
   }
 
+  static const _projectDir = 'project-dir';
+
   void addArgParser() {
     try {
       argParser
@@ -39,7 +41,7 @@ class GitCliCommand extends Command<int> {
         ..addOption(_sourceBranchKey,
             abbr: _sourceBranchKey.split('').first, defaultsTo: 'HEAD', help: 'Source branch for comparison. This branch contains the changes that will be analyzed against the target branch.')
         ..addOption(_outputDir, abbr: _output.split('').first, help: 'Path to the output directory where the analysis results will be saved.')
-        ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory that contains the source code to be analyzed.')
+        ..addOption(_projectDir, abbr: _projectDir.split('').first, help: 'Path to the project root directory that contains the source code to be analyzed.')
         ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the config file containing configuration options for the analysis tool');
     } catch (e) {
       Logger.error(e);
@@ -176,7 +178,7 @@ class LcovCliCommand extends Command<int> {
       return await result.exitCode;
     } catch (e) {
       Logger.error(e);
-      exit(-1);
+      return exit(-1);
     }
   }
 }

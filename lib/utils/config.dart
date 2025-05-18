@@ -18,6 +18,7 @@ const _projectPathKey = 'projectPath';
 const _configFile = 'config';
 const _reportFormat = 'report-format';
 const _reportType = 'reportType';
+const _projectDir = 'project-dir';
 
 /// Stores configuration options for the CoverOps CLI tool.
 ///
@@ -120,7 +121,7 @@ class Config {
       targetBranchFallback: fileConfig?.targetBranchFallback ?? args?[_targetBranchFallbackKey],
       sourceBranch: fileConfig?.sourceBranch ?? args?[_sourceBranchKey],
       output: fileConfig?.output ?? args?[_outputDir],
-      projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
+      projectPath: fileConfig?.projectPath ?? args?[_projectDir],
     );
   }
 

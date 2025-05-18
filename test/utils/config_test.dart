@@ -22,6 +22,7 @@ void main() {
         ..addOption('projectPath')
         ..addOption('config')
         ..addOption('reportType')
+        ..addOption('project-dir')
         ..addOption('report-format');
     });
 
@@ -69,7 +70,7 @@ void main() {
         '--fallback=master',
         '--source-branch=feature',
         '--output-dir=output',
-        '--projectPath=/path',
+        '--project-dir=/path',
       ]);
 
       final config = Config.gitParserfromArgs(args);

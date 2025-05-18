@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
 
 
@@ -8,6 +10,12 @@ import 'package:dcli/dcli.dart';
 /// levels (info, warning, error, log, success) with color-coded output using the
 /// `dcli` package.
 class Logger {
+
+  /// The output sink for error messages.
+  /// 
+  /// By default, writes to stderr (standard output). Can be modified to redirect
+  /// error output to a different destination like a file.
+  static IOSink errorOutput = stderr;
   /// Parses a message into a string, handling various input types.
   ///
   /// Converts the input [message] to a string, extracting relevant details for
@@ -74,7 +82,7 @@ class Logger {
   /// Logger.error(Error());
   /// ```
   static void error(dynamic message) {
-    print(red('[ERROR] ${_parseMessage(message)}'));
+    errorOutput.writeln(red('[ERROR] ${_parseMessage(message)}'));
   }
 
   /// Logs a general message in grey with a [LOG] prefix.
