@@ -178,7 +178,7 @@ class LcovCliCommand extends Command<int> {
       return await result.exitCode;
     } catch (e) {
       Logger.error(e);
-      return exit(-1);
+      exit(-1);
     }
   }
 }
