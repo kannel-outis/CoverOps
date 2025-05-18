@@ -18,6 +18,7 @@ const _output = 'output';
 const _outputDir = 'output-dir';
 const _projectPathKey = 'projectPath';
 const _configFile = 'config';
+const _reportFormat = 'report-format';
 
 
 //TODO(kanniel-outis): move to git parser package folder
@@ -25,6 +26,8 @@ class GitCliCommand extends Command<int> {
   GitCliCommand() {
     addArgParser();
   }
+
+  static const _projectDir = 'project-dir';
 
   void addArgParser() {
     try {
@@ -38,7 +41,7 @@ class GitCliCommand extends Command<int> {
         ..addOption(_sourceBranchKey,
             abbr: _sourceBranchKey.split('').first, defaultsTo: 'HEAD', help: 'Source branch for comparison. This branch contains the changes that will be analyzed against the target branch.')
         ..addOption(_outputDir, abbr: _output.split('').first, help: 'Path to the output directory where the analysis results will be saved.')
-        ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory that contains the source code to be analyzed.')
+        ..addOption(_projectDir, abbr: _projectDir.split('').first, help: 'Path to the project root directory that contains the source code to be analyzed.')
         ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the config file containing configuration options for the analysis tool');
     } catch (e) {
       Logger.error(e);
@@ -105,6 +108,7 @@ class LcovCliCommand extends Command<int> {
   LcovCliCommand() {
     addArgParser();
   }
+  static const _reportType = 'reportType';
 
   void addArgParser() {
     try {
@@ -114,6 +118,7 @@ class LcovCliCommand extends Command<int> {
         ..addOption(_output, abbr: _output.split('').first, help: 'Path to the output directory where the processed coverage reports will be saved')
         ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory containing the source code for coverage analysis')
         ..addOption(_gitParserFileKey, abbr: _gitParserFileKey.split('').first, help: 'Path to the git parser file containing git change analysis results')
+        ..addOption(_reportType, abbr: _reportType.split('').first, defaultsTo: 'html', help: 'Format of the output report (html, json, or console)')
         ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the config file containing configuration options for the analysis tool');
     } catch (e) {
       Logger.error(e);
@@ -136,6 +141,7 @@ class LcovCliCommand extends Command<int> {
       final outputDir = config.output;
       final projectPath = config.projectPath;
       final gitParserFile = config.gitParserFile;
+      final reportFormat = config.reportFormat;
       final result = await Process.instance.start(
         'dart',
         [
@@ -160,6 +166,10 @@ class LcovCliCommand extends Command<int> {
             '--gitParserFile',
             gitParserFile,
           ],
+          if (reportFormat != null) ...[
+            '--reportType',
+            reportFormat,
+          ]
         ],
         runInShell: true,
       );
@@ -191,6 +201,7 @@ class MainRunnerCommand extends Command<int> {
         ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory containing the source code for analysis')
         ..addOption(_gitParserFileKey, abbr: _gitParserFileKey.split('').first, help: 'Path to the git parser file containing the results of git change analysis')
         ..addOption(_outputDir, help: 'Path to the output directory where the analysis results will be saved.')
+        ..addOption(_reportFormat, abbr: _reportFormat.split('').first, defaultsTo: 'html', help: 'Format of the output report (html, json, or console)')
         ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the config file containing configuration options for the analysis tool');
     } catch (e) {
       Logger.error(e);
@@ -255,6 +266,10 @@ class MainRunnerCommand extends Command<int> {
           '--gitParserFile',
           config.gitParserFile!,
         ],
+         if (config.reportFormat != null) ...[
+          '--reportType',
+          config.reportFormat!,
+        ]
       ];
 
       await main.run(['git', ...gitOptions]);
