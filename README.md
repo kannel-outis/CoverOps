@@ -12,7 +12,7 @@ CoverOps is a powerful, cross-platform CLI tool that helps you track test covera
 * 🔎 **Cross-language Coverage** – Supports any project using Git with LCOV or JSON coverage files.
 * 🌐 **Multiple Report Formats** – Generates **HTML**, **JSON**, and **console** summaries.
 * ⚡ **Lightweight & Fast** – Built with performance in mind.
-* 🧩 **Plug & Play** – Use it directly or integrate into your CI pipeline. *(coming soon)*
+* 🧩 **Plug & Play** – Use it directly or integrate into your CI pipeline.
 * 🛠️ **Configurable** – Use a JSON config file to simplify complex commands.
 
 ---
@@ -146,7 +146,7 @@ Process LCOV or JSON coverage files and match against Git diff data.
 cover lcov --lcov=coverage/lcov.info --gitParserFile=coverage/.gitparser.json --output=coverage
 ```
 
-### `run`
+### `report`
 
 Runs both `git` and `lcov` commands in one go.
 
@@ -294,8 +294,6 @@ We welcome contributions of all kinds!
 3. Use [Conventional Commits](https://www.conventionalcommits.org/)
 4. Test your changes
 5. Submit a pull request
-
-Please follow the [Code of Conduct](CODE_OF_CONDUCT.md) and [Style Guide](STYLE_GUIDE.md).
 
 ---
 
