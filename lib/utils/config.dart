@@ -17,6 +17,7 @@ const _outputDir = 'output-dir';
 const _projectPathKey = 'projectPath';
 const _configFile = 'config';
 const _reportFormat = 'report-format';
+const _reportType = 'reportType';
 
 /// Stores configuration options for the CoverOps CLI tool.
 ///
@@ -141,7 +142,7 @@ class Config {
       gitParserFile: fileConfig?.gitParserFile ?? args?[_gitParserFileKey],
       output: fileConfig?.output ?? args?[_output],
       projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
-      reportFormat: fileConfig?.reportFormat ?? args?[_reportFormat],
+      reportFormat: fileConfig?.reportFormat ?? args?[_reportType],
     );
   }
 

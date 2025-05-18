@@ -21,6 +21,7 @@ void main() {
         ..addOption('output-dir')
         ..addOption('projectPath')
         ..addOption('config')
+        ..addOption('reportType')
         ..addOption('report-format');
     });
 
@@ -89,7 +90,7 @@ void main() {
         '--gitParserFile=git.json',
         '--output=output',
         '--projectPath=/path',
-        '--report-format=html,json',
+        '--reportType=html,json',
       ]);
 
       final config = Config.lcovParserfromArgs(args);
