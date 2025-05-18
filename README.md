@@ -2,7 +2,7 @@
 
 **Spot untested code like a pro with CoverOps — your go-to coverage companion for any project.**
 
-CoverOps is a powerful, cross-platform CLI tool that helps you track test coverage on new or modified code. By combining Git diffs with LCOV or JSON coverage reports, it generates insightful HTML reports that highlight what’s tested — and what’s not. Whether you’re building in Dart, Python, JavaScript, or anything else, CoverOps keeps your code accountable and clean.
+CoverOps is a powerful, cross-platform CLI tool that helps you track test coverage on new or modified code. By combining Git diffs with LCOV or JSON coverage reports, it generates insightful **HTML**, **JSON**, and **console** reports that highlight what’s tested — and what’s not. Whether you’re building in Dart, Python, JavaScript, or anything else, CoverOps keeps your code accountable and clean.
 
 ---
 
@@ -10,9 +10,10 @@ CoverOps is a powerful, cross-platform CLI tool that helps you track test covera
 
 * ✅ **Track New Code** – Pinpoints untested lines in changed or newly added code.
 * 🔎 **Cross-language Coverage** – Supports any project using Git with LCOV or JSON coverage files.
-* 🌐 **Visual Reports** – Generates clean, browsable HTML reports.
+* 🌐 **Multiple Report Formats** – Generates **HTML**, **JSON**, and **console** summaries.
 * ⚡ **Lightweight & Fast** – Built with performance in mind.
-* 🧩 **Plug & Play** – Use it directly or integrate into your CI pipeline. *(coming soon)*
+* 🧩 **Plug & Play** – Use it directly or integrate into your CI pipeline.
+* 🛠️ **Configurable** – Use a JSON config file to simplify complex commands.
 
 ---
 
@@ -20,12 +21,8 @@ CoverOps is a powerful, cross-platform CLI tool that helps you track test covera
 
 CoverOps highlights what’s tested — and what’s not — in your changed code.
 
-![Screenshot 2025-05-16 at 12 37 14 PM](https://github.com/user-attachments/assets/0349bb90-f02d-4aac-b7ac-953e6210bf21)
-![Screenshot 2025-05-16 at 12 36 41 PM](https://github.com/user-attachments/assets/f71695ff-9e7c-4ca6-8522-5c91c2098780)
+![Screenshot 2025-05-17 at 9 30 28 PM](https://github.com/user-attachments/assets/16cca79b-dbd1-4847-beca-175f0aa6be4a) 
 <video src='https://github.com/user-attachments/assets/54bfbeb0-9de4-4607-875e-ea3c9073bb3f' width=180/>
-
-
-
 
 > ✅ **Green** = Covered lines in changed code
 > ❌ **Red** = Missed lines in changed code
@@ -35,7 +32,9 @@ CoverOps highlights what’s tested — and what’s not — in your changed cod
 
 * Track test coverage of **only new or modified code**.
 * Works across languages (Dart, Python, JS, etc.).
-* Easy-to-read, linkable **HTML reports**.
+* Easy-to-read, linkable **HTML reports**, machine-readable **JSON**, and quick **console** summaries.
+* Supports multiple output formats: `html`, `json`, `console` — or even **all three at once**.
+* Use a **JSON config file** for easy setup and reuse.
 
 ---
 
@@ -45,6 +44,7 @@ CoverOps highlights what’s tested — and what’s not — in your changed cod
 * [What You Need](#what-you-need)
 * [Installation](#installation)
 * [Commands](#commands)
+* [Report Types](#report-types)
 * [Usage Example](#usage-example)
 * [Script It Up](#script-it-up)
 * [Contributing](#contributing)
@@ -61,9 +61,12 @@ git clone https://github.com/kannel-outis/CoverOps.git
 cd CoverOps
 
 # Run coverage analysis
-bin/cover_ops.dart run --lcov coverage/lcov.info --target-branch main --source-branch HEAD --output coverage
+cover report --lcov=coverage/lcov.info --target-branch=main --source-branch=HEAD --output=coverage --report-format=html,console
 
-# Open the report
+# Or use a config file
+cover report --config=config/coverops.json
+
+# Open the HTML report
 open file://$(pwd)/coverage/lcov_html/index.html
 ```
 
@@ -132,7 +135,7 @@ Make sure the Dart SDK is installed and in your `PATH`. Get it here: [https://da
 Analyze code changes between branches.
 
 ```bash
-cover git --target-branch main --source-branch feature-branch --output-dir coverage
+cover git --target-branch=main --source-branch=feature-branch --output-dir=coverage
 ```
 
 ### `lcov`
@@ -140,16 +143,70 @@ cover git --target-branch main --source-branch feature-branch --output-dir cover
 Process LCOV or JSON coverage files and match against Git diff data.
 
 ```bash
-cover lcov --lcov coverage/lcov.info --gitParserFile coverage/.gitparser.json --output coverage
+cover lcov --lcov=coverage/lcov.info --gitParserFile=coverage/.gitparser.json --output=coverage
 ```
 
-### `run`
+### `report`
 
 Runs both `git` and `lcov` commands in one go.
 
 ```bash
-cover report --lcov coverage/lcov.info --target-branch main --source-branch feature-branch --output coverage
+cover report --lcov=coverage/lcov.info --target-branch=main --source-branch=feature-branch --output=coverage
 ```
+
+You can also pass a config file instead of CLI arguments:
+
+```bash
+cover report --config=config/coverops.json
+```
+
+---
+
+## Report Types
+
+CoverOps supports **multiple report formats**, which can be combined with a comma-separated list.
+
+| Format    | Description                                     |
+| --------- | ----------------------------------------------- |
+| `html`    | Fully styled, browsable report with annotations |
+| `json`    | Structured, CI/CD-ready output                  |
+| `console` | Human-readable summary printed to stdout        |
+
+### Examples:
+
+```bash
+# Single format
+cover report --report-format=html
+
+# Multiple formats
+cover report --report-format=html,console,json
+```
+
+Default format is `html` if none is specified.
+
+---
+
+## Configuration File Support
+
+You can simplify command-line usage by placing arguments in a config file:
+
+```bash
+cover report --config=config/coverops.json
+```
+
+### Example `coverops.json`:
+
+```json
+{
+  "lcov": "coverage/lcov.info"
+  "targetBranch": "main"
+  "sourceBranch": "HEAD"
+  "output": "coverage"
+  "reportFormat": ["html","console"]
+}
+```
+
+Use this in scripts or CI for consistency and clarity.
 
 ---
 
@@ -162,21 +219,21 @@ For different project types:
 ```bash
 flutter test --coverage
 lcov --remove coverage/lcov.info '*.g.dart' '*.part.dart' -o coverage/lcov.info
-cover report --lcov coverage/lcov.info --target-branch main --output coverage
+cover report --lcov=coverage/lcov.info --target-branch=main --output=coverage --report-format=html,console
 ```
 
 ### Python
 
 ```bash
 pytest --cov=src --cov-report=lcov:coverage/lcov.info
-cover report --lcov coverage/lcov.info --target-branch main --output coverage
+cover report --lcov=coverage/lcov.info --target-branch=main --output=coverage --report-format=html
 ```
 
 ### JavaScript
 
 ```bash
 jest --coverage --coverageReporters=json
-cover report --json coverage/coverage-final.json --target-branch main --output coverage
+cover report --lcov=coverage/coverage-final.json --target-branch=main --output=coverage --report-format=console
 ```
 
 ---
@@ -200,8 +257,11 @@ fi
 echo "Run your test suite and generate LCOV/JSON coverage..."
 # Example: pytest --cov=src --cov-report=lcov:coverage/lcov.info
 
-# Run CoverOps
-cover report --lcov coverage/lcov.info --target-branch main --source-branch HEAD --output coverage
+# Option 1: CLI flags
+cover report --lcov=coverage/lcov.info --target-branch=main --source-branch=HEAD --output=coverage --report-format=html,console,json
+
+# Option 2: Config file
+# cover report --config=config/coverops.yaml
 
 # Open the HTML report
 report_path="coverage/lcov_html/index.html"
@@ -234,8 +294,6 @@ We welcome contributions of all kinds!
 3. Use [Conventional Commits](https://www.conventionalcommits.org/)
 4. Test your changes
 5. Submit a pull request
-
-Please follow the [Code of Conduct](CODE_OF_CONDUCT.md) and [Style Guide](STYLE_GUIDE.md).
 
 ---
 
