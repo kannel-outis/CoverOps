@@ -1,4 +1,4 @@
-import 'package:html_gen/src/tag.dart';
+import 'package:html_generator/src/tag.dart';
 import 'package:test/test.dart';
 
 void main() {

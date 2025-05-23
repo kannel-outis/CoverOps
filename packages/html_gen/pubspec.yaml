@@ -1,4 +1,4 @@
-name: html_gen
+name: html_generator
 description: HTML Gen is a Dart package that provides an object-oriented approach to generating HTML markup.
 version: 1.0.0
 repository: https://github.com/kannel-outis/CoverOps/tree/main/packages/html_gen

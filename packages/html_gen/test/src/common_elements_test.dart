@@ -1,4 +1,4 @@
-import 'package:html_gen/src/common_elements.dart';
+import 'package:html_generator/html_generator.dart';
 import 'package:test/test.dart';
 
 void main() {

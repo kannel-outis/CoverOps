@@ -1,4 +1,4 @@
-import 'package:html_gen/src/tag.dart';
+import 'package:html_generator/html_generator.dart';
 
 /// Self-Closing Tags
 /// Represents a line break HTML element (<br>)
