@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dcli/dcli.dart';
-import 'package:html_gen/html_gen.dart';
+import 'package:html_generator/html_generator.dart';
 import 'package:lcov_cli/generators/tags.dart';
 
 class HtmlFileHelper {
