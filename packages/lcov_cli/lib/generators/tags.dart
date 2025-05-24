@@ -1,4 +1,4 @@
-import 'package:html_gen/html_gen.dart';
+import 'package:html_generator/html_generator.dart';
 
 class SpanTag extends NonSelfClosingTag {
   SpanTag({super.content, super.attributes, super.children});

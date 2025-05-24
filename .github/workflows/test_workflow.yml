@@ -1,0 +1,41 @@
+name: PR Code coverage Report
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, synchronize]
+    paths:
+      - "**.dart"
+
+jobs:
+  analyze_code:
+    name: Analyze code
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.3'
+
+      - name: Install dependencies
+        run: |
+          cd .github
+          make all
+
+      - name: Run Tests
+        run: |
+          cd .github
+          make test
+
+      - name: Run CoverOps
+        run: |
+          cd .github
+          make report

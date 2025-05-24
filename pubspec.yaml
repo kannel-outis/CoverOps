@@ -1,13 +1,13 @@
 name: cover_ops
 description: A sample command-line application.
 version: 1.0.0
-publish_to: 'none'
+publish_to: "none"
 
 environment:
   sdk: ^3.5.3
 
 dependencies:
-  args: '^2.4.2'
+  args: "^2.4.2"
   dcli: any
   process:
     git:
@@ -16,3 +16,10 @@ dependencies:
 dev_dependencies:
   lints: ^4.0.0
   test: ^1.24.0
+
+
+# Required by pipeline
+sub_modules:
+  - path: ./packages/git_parser_cli
+  - path: ./packages/lcov_cli
+  - path: ./packages/html_gen

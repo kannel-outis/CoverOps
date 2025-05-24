@@ -25,6 +25,8 @@ class GitParserCli {
 
     final args = parser.parse(arguments);
     final settings = GitParserUtils.getGitSettings(args);
+
+    print(settings.outputDir);
     
     GitParser<List<GitFile>> gitParser = GitDiffParser(
       targetBranch: settings.targetBranch,
@@ -35,6 +37,7 @@ class GitParserCli {
 
     final gitfiles = await gitParser.parse();
     final hitMap = GitParserUtils.generateDiffMap(gitfiles, await GitParserUtils.getCurrentGitDir());
-    await GitParserUtils.writeDiffMapToJson(hitMap, '${settings.outputDir}/.gitparser.json');
+    final path = await GitParserUtils.writeDiffMapToJson(hitMap, '${settings.outputDir}/gitparser.json');
+    print(path);
   }
 }

@@ -42,18 +42,22 @@ class GitParserUtils {
     return hitMap;
   }
 
-  static Future<void> writeDiffMapToJson(Map<String, Map<String, int>> hitMap, String filePath) async {
+  static Future<String?> writeDiffMapToJson(Map<String, Map<String, int>> hitMap, String filePath) async {
     try {
       String jsonString = json.encode(hitMap);
       File file = File(filePath);
       if (await file.exists()) {
         await file.delete(); // Deletes the file if it exists
       }
+      await file.create(recursive: true);
       await file.writeAsString(jsonString);
 
       print("Output:$filePath");
+      return file.path;
     } catch (e) {
+      print('Unable to write to file: $e');
       exitWithMessage(e.toString());
+      throw Exception(e.toString());
     }
   }
 

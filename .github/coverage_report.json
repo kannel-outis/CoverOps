@@ -1,0 +1,92 @@
+{
+  "packages/git_parser_cli": {
+    "total_lines": 314,
+    "total_files": 4,
+    "total_hittable_lines": 69,
+    "total_covered_lines": 51,
+    "total_lines_missed": 18,
+    "total_hittable_modified_lines": 0,
+    "total_hit_on_modified_lines": 0,
+    "total_modified_lines": 0,
+    "files": {
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/git_parser_cli/lib/models/git_file.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/git_parser_cli/lib/parser/git_diff_parser.dart": "80 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/git_parser_cli/lib/process.dart": "33 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/git_parser_cli/lib/utils/utils.dart": "0 %"
+    },
+    "total_coverage_percentage": "74 %",
+    "total_coverage_percentage_on_modified": "0 %"
+  },
+  "packages/lcov_cli": {
+    "total_lines": 2268,
+    "total_files": 23,
+    "total_hittable_lines": 726,
+    "total_covered_lines": 637,
+    "total_lines_missed": 89,
+    "total_hittable_modified_lines": 0,
+    "total_hit_on_modified_lines": 0,
+    "total_modified_lines": 3,
+    "files": {
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/parsers/json_parser.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/parsers/lcov_parser.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/parsers/line_parser.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/utils/enums.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/models/code_file.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/models/line.dart": "83 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/models/lcov_file_group.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/parsers/total_code_coverage_file_parser.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/parsers/code_coverage_file_parser.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/parsers/code_file_parser.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/generators/console_report_generator.dart": "98 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/generators/generator.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/generators/html_files_gen.dart": "87 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/generators/json_file_report_generator.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/generators/html_file_helper.dart": "99 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/generators/tags.dart": "60 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/generators/syntax/syntax_decorator.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/utils/utils.dart": "77 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/generators/syntax/syntax_rule.dart": "89 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/utils/chain/chain_link.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/utils/chain/style_chain.dart": "70 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/run.dart": "0 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/lcov_cli/lib/utils/arg_settings.dart": "100 %"
+    },
+    "total_coverage_percentage": "88 %",
+    "total_coverage_percentage_on_modified": "0 %"
+  },
+  "packages/html_gen": {
+    "total_lines": 217,
+    "total_files": 2,
+    "total_hittable_lines": 46,
+    "total_covered_lines": 38,
+    "total_lines_missed": 8,
+    "total_hittable_modified_lines": 0,
+    "total_hit_on_modified_lines": 0,
+    "total_modified_lines": 0,
+    "files": {
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/html_gen/lib/src/tag.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/packages/html_gen/lib/src/common_elements.dart": "70 %"
+    },
+    "total_coverage_percentage": "83 %",
+    "total_coverage_percentage_on_modified": "0 %"
+  },
+  "root": {
+    "total_lines": 675,
+    "total_files": 5,
+    "total_hittable_lines": 222,
+    "total_covered_lines": 194,
+    "total_lines_missed": 28,
+    "total_hittable_modified_lines": 0,
+    "total_hit_on_modified_lines": 0,
+    "total_modified_lines": 0,
+    "files": {
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/lib/utils/config.dart": "95 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/lib/commands/comands.dart": "89 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/lib/utils/logger.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/lib/utils/utils.dart": "100 %",
+      "/Users/taiwo.enikuomehin/Documents/practice/lcov_reader_worspace/lib/commands/runner.dart": "0 %"
+    },
+    "total_coverage_percentage": "87 %",
+    "total_coverage_percentage_on_modified": "0 %"
+  }
+}
