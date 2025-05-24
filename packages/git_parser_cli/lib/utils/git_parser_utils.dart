@@ -42,7 +42,7 @@ class GitParserUtils {
     return hitMap;
   }
 
-  static Future<void> writeDiffMapToJson(Map<String, Map<String, int>> hitMap, String filePath) async {
+  static Future<String?> writeDiffMapToJson(Map<String, Map<String, int>> hitMap, String filePath) async {
     try {
       String jsonString = json.encode(hitMap);
       File file = File(filePath);
@@ -53,9 +53,11 @@ class GitParserUtils {
       await file.writeAsString(jsonString);
 
       print("Output:$filePath");
+      return file.path;
     } catch (e) {
       print('Unable to write to file: $e');
       exitWithMessage(e.toString());
+      throw Exception(e.toString());
     }
   }
 
