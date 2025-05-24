@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+ROOT_DIR=$(git rev-parse --show-toplevel)
 check_git_ignore() {
     item_to_ignore="coverage/"
     gitignore_file="$cur/.gitignore"
@@ -43,7 +45,7 @@ check_git_ignore
 flutter test --coverage
 
 # Build cover command
-cover_command="cover report"
+cover_command="dart $ROOT_DIR/bin/cover_ops.dart report"
 cover_command+=" --lcov=\"$cur/coverage/lcov.info\" --output=\"$cur/coverage/\" --gitParserFile=\"$cur/coverage/.gitparser.json\" --target-branch=\"$target_branch\" --source-branch=HEAD --report-format=console,json"
 if [[ -n "$config_file" ]]; then
     cover_command+=" --config=\"$config_file\""
