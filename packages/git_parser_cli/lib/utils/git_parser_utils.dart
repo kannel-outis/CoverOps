@@ -54,6 +54,7 @@ class GitParserUtils {
 
       print("Output:$filePath");
     } catch (e) {
+      print('Unable to write to file: $e');
       exitWithMessage(e.toString());
     }
   }
