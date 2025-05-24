@@ -49,6 +49,7 @@ class GitParserUtils {
       if (await file.exists()) {
         await file.delete(); // Deletes the file if it exists
       }
+      await file.create(recursive: true);
       await file.writeAsString(jsonString);
 
       print("Output:$filePath");
