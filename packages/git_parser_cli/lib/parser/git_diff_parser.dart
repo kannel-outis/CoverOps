@@ -168,6 +168,7 @@ class GitDiffParser extends GitParser<List<GitFile>> {
         buffer.write('Please provide a valid branch name or commit hash. You can also provide a fallback branch name.');
       }
       exitWithMessage(buffer.toString(), shouldExit: true);
+      throw Exception('unknown revision or path not in the working tree');
     }
 
     return process;
