@@ -9,6 +9,7 @@ environment:
 dependencies:
   args: "^2.4.2"
   dcli: any
+  path: ^1.9.1
   process:
     git:
       url: https://github.com/kannel-outis/process.git
