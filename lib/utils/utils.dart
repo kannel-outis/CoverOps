@@ -1,11 +1,11 @@
 import 'package:dcli/dcli.dart' hide isEmpty;
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 
 class Utils {
   static String get root {
-    final scriptPath = DartScript.self.pathToScriptDirectory.split('${separator}bin');
+    final scriptPath = DartScript.self.pathToScriptDirectory.split('${path.separator}bin');
     scriptPath.removeLast();
-    return scriptPath.join(separator);
+    return scriptPath.join(path.separator);
   }
 }
 
