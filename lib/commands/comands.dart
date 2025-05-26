@@ -69,7 +69,6 @@ class GitCliCommand extends Command<int> {
       final result = await Process.instance.start(
         'dart',
         [
-          // '${Utils.root}/packages/git_parser_cli/bin/git_parser_cli.dart',
           path.join(Utils.root, 'packages', 'git_parser_cli', 'bin', 'git_parser_cli.dart'),
           if (targetBranch != null) ...[
             '--target-branch',
@@ -147,7 +146,6 @@ class LcovCliCommand extends Command<int> {
       final result = await Process.instance.start(
         'dart',
         [
-          // '${Utils.root}/packages/lcov_cli/bin/lcov_cli.dart',
           path.join(Utils.root, 'packages', 'lcov_cli', 'bin', 'lcov_cli.dart'),
           if (lcovFile != null) ...[
             '--lcov',
