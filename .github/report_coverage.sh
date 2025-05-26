@@ -41,5 +41,5 @@ if [ "$percentage" -lt "$THRESHOLD_PERCENT" ]; then
     exit 1
 else
     echo "✅ Coverage meets threshold. $percentage% coverage is good."
-    exit 1
+    exit 0
 fi

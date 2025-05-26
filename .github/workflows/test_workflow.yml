@@ -39,4 +39,4 @@ jobs:
         run: |
           cd .github
           make report
-          ./report_coverage.sh
+          ./report_coverage.sh 90
