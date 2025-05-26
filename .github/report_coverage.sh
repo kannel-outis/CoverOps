@@ -40,6 +40,6 @@ if [ "$percentage" -lt "$THRESHOLD_PERCENT" ]; then
     echo "❌ Coverage below threshold. Failing. Your coverage is $percentage%. you need to increase it to at least $THRESHOLD_PERCENT%."
     exit 1
 else
-    echo "✅ Coverage meets threshold."
-    exit 0
+    echo "✅ Coverage meets threshold. $percentage% coverage is good."
+    exit 1
 fi
