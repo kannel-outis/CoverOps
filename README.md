@@ -12,7 +12,7 @@ CoverOps is a powerful, cross-platform CLI tool that helps you track test covera
 * 🔎 **Cross-language Coverage** – Supports any project using Git with LCOV or JSON coverage files.
 * 🌐 **Multiple Report Formats** – Generates **HTML**, **JSON**, and **console** summaries.
 * ⚡ **Lightweight & Fast** – Built with performance in mind.
-* 🧩 **Plug & Play** – Use it directly or integrate into your CI pipeline.
+* 🧩 **Plug & Play** – Use it directly or integrate into your [CI pipeline](https://github.com/kannel-outis/CoverOps/tree/main/.github).
 * 🛠️ **Configurable** – Use a JSON config file to simplify complex commands.
 
 ---
