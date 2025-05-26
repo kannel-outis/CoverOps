@@ -11,7 +11,7 @@ define COMMANDS
 endef
 
 define TEST_CMD
-	git pull && \
+	git fetch origin && \
 	$(SAMPLE_SCRIPT) --target-branch=origin/main
 endef
 
