@@ -12,7 +12,9 @@ endef
 
 define TEST_CMD
 	git fetch origin main && \
-	$(SAMPLE_SCRIPT) --target-branch=origin/main
+	$(SAMPLE_SCRIPT) --target-branch=origin/main && \
+	cd coverage && \
+	ls
 endef
 
 all: build_package
