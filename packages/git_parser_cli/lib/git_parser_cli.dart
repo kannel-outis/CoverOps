@@ -25,6 +25,8 @@ class GitParserCli {
 
     final args = parser.parse(arguments);
     final settings = GitParserUtils.getGitSettings(args);
+
+    print(settings.outputDir);
     
     GitParser<List<GitFile>> gitParser = GitDiffParser(
       targetBranch: settings.targetBranch,

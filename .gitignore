@@ -16,3 +16,4 @@ todo.txt
 pubspec.lock
 config.json
 build/
+coverage_report.json

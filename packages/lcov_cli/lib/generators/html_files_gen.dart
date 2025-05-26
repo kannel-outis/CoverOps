@@ -3,7 +3,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:html_gen/html_gen.dart';
+import 'package:html_generator/html_generator.dart';
 import 'package:lcov_cli/generators/generator.dart';
 import 'package:lcov_cli/generators/html_file_helper.dart';
 import 'package:lcov_cli/generators/syntax/syntax_decorator.dart';

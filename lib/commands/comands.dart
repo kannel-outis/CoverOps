@@ -7,6 +7,7 @@ import 'package:process/process.dart';
 
 import 'package:args/command_runner.dart';
 import 'package:cover_ops/utils/utils.dart';
+import 'package:path/path.dart' as path;
 
 const _lcovFileKey = 'lcov';
 const _jsonCoverageKey = 'json';
@@ -68,7 +69,8 @@ class GitCliCommand extends Command<int> {
       final result = await Process.instance.start(
         'dart',
         [
-          '${Utils.root}/packages/git_parser_cli/bin/git_parser_cli.dart',
+          // '${Utils.root}/packages/git_parser_cli/bin/git_parser_cli.dart',
+          path.join(Utils.root, 'packages', 'git_parser_cli', 'bin', 'git_parser_cli.dart'),
           if (targetBranch != null) ...[
             '--target-branch',
             targetBranch,
@@ -145,7 +147,8 @@ class LcovCliCommand extends Command<int> {
       final result = await Process.instance.start(
         'dart',
         [
-          '${Utils.root}/packages/lcov_cli/bin/lcov_cli.dart',
+          // '${Utils.root}/packages/lcov_cli/bin/lcov_cli.dart',
+          path.join(Utils.root, 'packages', 'lcov_cli', 'bin', 'lcov_cli.dart'),
           if (lcovFile != null) ...[
             '--lcov',
             lcovFile,
