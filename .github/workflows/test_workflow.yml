@@ -20,10 +20,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.3'
+      - name: Setup & install Dart
+        uses: dart-lang/setup-dart@v1
 
       - name: Install dependencies
         run: |

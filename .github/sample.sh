@@ -42,7 +42,9 @@ config_file=$(get_arg_value "--config")
 flutter pub get
 check_git_ignore
 
-flutter test --coverage
+dart test --coverage=coverage
+dart pub global activate coverage
+format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.dart_tool/package_config.json --report-on=lib
 
 # Build cover command
 cover_command="dart $ROOT_DIR/bin/cover_ops.dart report"
