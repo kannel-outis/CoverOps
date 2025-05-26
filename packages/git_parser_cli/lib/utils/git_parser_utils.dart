@@ -51,8 +51,6 @@ class GitParserUtils {
       }
       await file.create(recursive: true);
       await file.writeAsString(jsonString);
-
-      print("Output:$filePath");
       return file.path;
     } catch (e) {
       print('Unable to write to file: $e');
