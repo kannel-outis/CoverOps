@@ -19,6 +19,8 @@ const _configFile = 'config';
 const _reportFormat = 'report-format';
 const _reportType = 'reportType';
 const _projectDir = 'project-dir';
+const _analysisParserFileKey = 'analysisParserFile';
+const _languageKey = 'lang';
 
 /// Stores configuration options for the CoverOps CLI tool.
 ///
@@ -34,6 +36,9 @@ class Config {
 
   /// Path to the Git analysis results file (e.g., `coverage/.gitparser.json`).
   final String? gitParserFile;
+
+  /// Path to the analysis results file (e.g., `coverage/.analysis.json`).
+  final String? analysisParserFile;
 
   /// Target branch for Git comparison (e.g., `main`).
   final String? targetBranch;
@@ -53,6 +58,12 @@ class Config {
   /// Report format (e.g., `html`, `json`, `console`).
   final String? reportFormat;
 
+  /// Language of the project.
+  final String? language;
+
+  /// Path to the configuration file.
+  final String? config;
+
   /// Creates a [Config] instance with the specified options.
   ///
   /// All parameters are optional and can be null if not specified.
@@ -61,22 +72,27 @@ class Config {
   ///  - `lcovFile` Path to the LCOV coverage file.
   ///  - `jsonCoverage` Path to the JSON coverage file.
   ///  - `gitParserFile` Path to the Git analysis results file.
+  ///  - `analyzerParserFile` Path to the analyzer results file.
   ///  - `targetBranch` Target branch for Git comparison.
   ///  - `targetBranchFallback` Fallback branch if target is unavailable.
   ///  - `sourceBranch` Source branch with changes.
   ///  - `output` Output directory for reports.
   ///  - `projectPath` Project root directory.
   ///  - `reportFormat` Report format (e.g., `html`, `json`, `console`).
+  ///  - `language` Language of the project.
   Config({
     this.lcovFile,
     this.jsonCoverage,
     this.gitParserFile,
+    this.analysisParserFile,
     this.targetBranch,
     this.targetBranchFallback,
     this.sourceBranch,
     this.output,
     this.projectPath,
+    this.language,
     this.reportFormat,
+    this.config,
   });
 
   /// Creates a [Config] instance from command-line arguments.
@@ -95,12 +111,15 @@ class Config {
       lcovFile: fileConfig?.lcovFile ?? args?[_lcovFileKey],
       jsonCoverage: fileConfig?.jsonCoverage ?? args?[_jsonCoverageKey],
       gitParserFile: fileConfig?.gitParserFile ?? args?[_gitParserFileKey],
+      analysisParserFile: fileConfig?.analysisParserFile ?? args?[_analysisParserFileKey],
       targetBranch: fileConfig?.targetBranch ?? args?[_targetBranchKey],
       targetBranchFallback: fileConfig?.targetBranchFallback ?? args?[_targetBranchFallbackKey],
       sourceBranch: fileConfig?.sourceBranch ?? args?[_sourceBranchKey],
       output: fileConfig?.output ?? args?[_output] ?? args?[_outputDir],
       projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
       reportFormat: fileConfig?.reportFormat ?? args?[_reportFormat],
+      language: fileConfig?.language ?? args?[_languageKey],
+      config: configPath,
     );
   }
 
@@ -141,9 +160,30 @@ class Config {
       lcovFile: fileConfig?.lcovFile ?? args?[_lcovFileKey],
       jsonCoverage: fileConfig?.jsonCoverage ?? args?[_jsonCoverageKey],
       gitParserFile: fileConfig?.gitParserFile ?? args?[_gitParserFileKey],
+      analysisParserFile: fileConfig?.analysisParserFile ?? args?[_analysisParserFileKey],
       output: fileConfig?.output ?? args?[_output],
       projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
       reportFormat: fileConfig?.reportFormat ?? args?[_reportType],
+    );
+  }
+
+  /// Creates a [Config] instance for analyzer parsing from command-line arguments.
+  ///
+  /// This factory constructor merges settings from [args] with those from a JSON
+  /// configuration file specified by the `--config` flag. File-based settings
+  /// take precedence for keys defined in the JSON file.
+  ///
+  /// Parameters:
+  ///   - `args` The parsed command-line arguments from [ArgResults].
+  /// returns A [Config] instance with merged settings for analyzer parsing.
+  factory Config.analyzerParserFromArgs(ArgResults? args) {
+    final configPath = args?[_configFile] as String?;
+    final fileConfig = _FileConfig(configFilePath: configPath).getConfig();
+    return Config(
+      output: fileConfig?.output ?? args?[_outputDir] ?? args?[_output],
+      projectPath: fileConfig?.projectPath ?? args?[_projectPathKey],
+      language: fileConfig?.language ?? args?[_languageKey],
+      config: configPath,
     );
   }
 
@@ -209,6 +249,7 @@ class _FileConfig extends Config {
         output: args[_output],
         projectPath: args[_projectPathKey],
         reportFormat: (args[_reportFormat.toCamelCase] as List<dynamic>?)?.join(','),
+        analysisParserFile: args[_analysisParserFileKey],
       );
     } catch (e) {
       Logger.error(e);

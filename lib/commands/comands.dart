@@ -20,6 +20,8 @@ const _outputDir = 'output-dir';
 const _projectPathKey = 'projectPath';
 const _configFile = 'config';
 const _reportFormat = 'report-format';
+const _languageKey = 'lang';
+const _analysisParserFileKey = 'analysisParserFile';
 
 
 //TODO(kanniel-outis): move to git parser package folder
@@ -120,6 +122,7 @@ class LcovCliCommand extends Command<int> {
         ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory containing the source code for coverage analysis')
         ..addOption(_gitParserFileKey, abbr: _gitParserFileKey.split('').first, help: 'Path to the git parser file containing git change analysis results')
         ..addOption(_reportType, abbr: _reportType.split('').first, defaultsTo: 'html', help: 'Format of the output report (html, json, or console)')
+        ..addOption(_analysisParserFileKey, abbr: _analysisParserFileKey.split('').first, help: 'Path to the analysis results file (e.g., `coverage/.analyzer.json`)')
         ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the config file containing configuration options for the analysis tool');
     } catch (e) {
       Logger.error(e);
@@ -143,6 +146,7 @@ class LcovCliCommand extends Command<int> {
       final projectPath = config.projectPath;
       final gitParserFile = config.gitParserFile;
       final reportFormat = config.reportFormat;
+      final analysisParserFile = config.analysisParserFile;
       final result = await Process.instance.start(
         'dart',
         [
@@ -170,7 +174,75 @@ class LcovCliCommand extends Command<int> {
           if (reportFormat != null) ...[
             '--reportType',
             reportFormat,
-          ]
+          ],
+          if (analysisParserFile != null) ...[
+            '--analysisParserFile',
+            analysisParserFile,
+          ],
+        ],
+        runInShell: true,
+      );
+      result.stdout.transform(utf8.decoder).listen(stdout.write);
+      result.stderr.transform(utf8.decoder).listen(stderr.write);
+      return await result.exitCode;
+    } catch (e) {
+      Logger.error(e);
+      exit(-1);
+    }
+  }
+}
+class AnalyzerCommand extends Command<int> {
+  AnalyzerCommand() {
+    addArgParser();
+  }
+
+  void addArgParser() {
+    try {
+      argParser
+        ..addOption(_outputDir, abbr: _outputDir.split('').first, help: 'Path to the output directory where the processed analysis report will be saved. result is processed to json file')
+        ..addOption(_projectPathKey, abbr: _projectPathKey.split('').first, help: 'Path to the project root directory containing the source code for code analysis')
+        ..addOption(_languageKey, abbr: _languageKey.split('').first.toUpperCase(), help: 'Language of the project')
+        ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the configuration file');
+    } catch (e) {
+      Logger.error(e);
+      exit(-1);
+    }
+  }
+
+  @override
+  String get description => 'Analyzer CLI Command Line Tool - Runs static code analysis and retrieves results';
+
+  @override
+  String get name => 'analyze';
+
+  @override
+  FutureOr<int>? run() async {
+    try {
+      final config = Config.analyzerParserFromArgs(argResults);
+      final configFile = config.config;
+      final outputDir = config.output;
+      final projectPath = config.projectPath;
+      final language = config.language;
+      final result = await Process.instance.start(
+        'dart',
+        [
+          path.join(Utils.root, 'packages', 'analysis_parser_cli', 'bin', 'analysis_parser_cli.dart'),
+          if (outputDir != null) ...[
+            '--output-dir',
+            outputDir,
+          ],
+          if (projectPath != null) ...[
+            '--project-dir',
+            projectPath,
+          ],
+          if (configFile != null) ...[
+            '--config',
+            configFile,
+          ],
+          if (language != null) ...[
+            '--lang',
+            language,
+          ],
         ],
         runInShell: true,
       );
@@ -203,6 +275,8 @@ class MainRunnerCommand extends Command<int> {
         ..addOption(_gitParserFileKey, abbr: _gitParserFileKey.split('').first, help: 'Path to the git parser file containing the results of git change analysis')
         ..addOption(_outputDir, help: 'Path to the output directory where the analysis results will be saved.')
         ..addOption(_reportFormat, abbr: _reportFormat.split('').first, defaultsTo: 'html', help: 'Format of the output report (html, json, or console)')
+        ..addOption(_languageKey, abbr: _languageKey.split('').first.toUpperCase(), defaultsTo: 'dart', help: 'Language of the project')
+        ..addOption(_analysisParserFileKey, abbr: _analysisParserFileKey.split('').first, help: 'Path to the analysis results file (e.g., `coverage/.analyzer.json`)')
         ..addOption(_configFile, abbr: _configFile.split('').first, help: 'Path to the config file containing configuration options for the analysis tool');
     } catch (e) {
       Logger.error(e);
@@ -270,16 +344,48 @@ class MainRunnerCommand extends Command<int> {
          if (config.reportFormat != null) ...[
           '--reportType',
           config.reportFormat!,
-        ]
+        ],
+        if (config.analysisParserFile != null) ...[
+          '--analysisParserFile',
+          config.analysisParserFile!,
+        ],
       ];
 
-      await main.run(['git', ...gitOptions]);
+      final analyzerOptions = [
+        if (config.output != null) ...[
+          '--output-dir',
+          config.output!,
+        ],
+        if (config.projectPath != null) ...[
+          '--project-dir',
+          config.projectPath!,
+        ],
+        if (config.config != null) ...[
+          '--config',
+          config.config!,
+        ],
+        if (config.language != null) ...[
+          '--lang',
+          config.language!,
+        ],
+      ];
+
+      final invoke = Future.wait([main.run(['git', ...gitOptions]), main.run(['analyze', ...analyzerOptions])]);
+      await _runSafely(invoke);
       await main.run(['lcov', ...lcovOptions]);
       Logger.success('Analysis completed successfully.');
       return 0;
     } catch (e) {
       Logger.error(e);
       exit(-1);
+    }
+  }
+
+  Future<void> _runSafely(Future invoke) async {
+    try {
+      await invoke;
+    } catch (e) {
+      Logger.error(e);
     }
   }
 }

@@ -81,6 +81,7 @@ void main() {
       final mainCommand = MainRunnerCommand(runner);
       runner.addCommand(GitCliCommand());
       runner.addCommand(LcovCliCommand());
+      runner.addCommand(AnalyzerCommand());
       runner.addCommand(mainCommand);
 
       // Simulate output from both commands
@@ -106,6 +107,10 @@ void main() {
         'build/output/git.json',
         '--report-format',
         'html,json',
+        '--analyzerParserFile',
+        'build/output/git.json',
+        '--dialect',
+        'dart',
       ]);
 
       expect(result, 0);

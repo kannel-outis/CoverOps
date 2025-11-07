@@ -10,15 +10,20 @@ class AnalysisParserCli {
   final argsParser = ArgParser();
   final projectDir = AnalysisCLIHelpers.projectPathKey;
   final outputDir = AnalysisCLIHelpers.outputDirKey;
+  final language = AnalysisCLIHelpers.languageKey;
+  final configFile = AnalysisCLIHelpers.configFileKey;
 
   Future<String?> run(List<String> arguments) async {
     argsParser
       ..addOption(outputDir, abbr: outputDir.split('').first, defaultsTo: projectPath)
-      ..addOption(projectDir, abbr: projectDir.split('').first, defaultsTo: projectPath);
+      ..addOption(projectDir, abbr: projectDir.split('').first, defaultsTo: projectPath)
+      ..addOption(language, abbr: language.split('').first.toUpperCase(), defaultsTo: 'dart')
+      ..addOption(configFile, abbr: configFile.split('').first);
 
     final args = argsParser.parse(arguments);
     final workingDirectory = args[projectDir]!;
     final outputDirectory = args[outputDir]!;
+    //TODO: get config from lang arg
     final AnalyzerConfig config = AnalyzerConfig.dart(workingDirectory: workingDirectory);
     final Parser parser = AnalysisParser(config: config);
 

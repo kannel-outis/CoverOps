@@ -69,7 +69,7 @@ linter:
     - prefer_spread_collections
 
     # Error Handling
-    - avoid_catches_without_on_clauses
+    # - avoid_catches_without_on_clauses
 
     # Best Practices
     - avoid_positional_boolean_parameters

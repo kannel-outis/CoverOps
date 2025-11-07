@@ -13,6 +13,7 @@ class CoverOpsRunner extends CommandRunner<int> {
   }
 
   void init() {
+    addCommand(AnalyzerCommand());
     addCommand(GitCliCommand());
     addCommand(LcovCliCommand());
     addCommand(MainRunnerCommand(this));

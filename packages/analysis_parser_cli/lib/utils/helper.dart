@@ -6,6 +6,8 @@ class AnalysisCLIHelpers {
 
   static const projectPathKey = 'project-dir';
   static const outputDirKey = 'output-dir';
+  static const languageKey = 'lang';
+  static const configFileKey = 'config';
   
   static Map<String, Map<String, dynamic>> generateAnalysisMap(List<AnalysisFile> analysisFiles) {
     final Map<String, Map<String, dynamic>> analysisMap = {};
