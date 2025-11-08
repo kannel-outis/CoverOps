@@ -107,9 +107,9 @@ void main() {
         'build/output/git.json',
         '--report-format',
         'html,json',
-        '--analyzerParserFile',
-        'build/output/git.json',
-        '--dialect',
+        '--analysisParserFile',
+        'build/output/analysis.json',
+        '--lang',
         'dart',
       ]);
 
