@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:lcov_cli/lcov_cli.dart';
 import 'package:lcov_cli/parsers/code_coverage_file_parser.dart';
-import 'package:lcov_cli/parsers/json_parser.dart';
+import 'package:lcov_cli/parsers/line_data_json_parser.dart';
 
 class LcovCli {
   Future<void> run(List<String> args) async {
@@ -26,7 +26,8 @@ class LcovCli {
       Directory(outputDir.orEmpty),
       settings.parserType,
       parsedProjectDir.path,
-      settings.gitParserJsonFile?.path,
+      settings.gitParserJsonFile,
+      settings.analysisResultsFile,
       settings.reportTypes,
     );
     stopwatch.stop();
@@ -39,19 +40,25 @@ class LcovCli {
     Directory outputDir,
     ParserType type,
     String? rootPath,
-    String? gitparserFile,
+    File? gitparserFile,
+    File? analysisResultsFile,
     List<ReportType> reportTypes,
   ) async {
-    LineParser? gitJsonParser;
+    DynamicLineParser? gitJsonParser;
+    DynamicLineParser? analysisJsonParser;
     if (gitparserFile != null) {
-      gitJsonParser = JsonFileLineParser(File(gitparserFile));
+      gitJsonParser = LineDataJsonParser.modified(gitparserFile);
+    }
+    if (analysisResultsFile != null) {
+      analysisJsonParser = LineDataJsonParser.quality(analysisResultsFile);
     }
 
     final LineParser lcovLineParser = LineParser.fromType(type, file);
     final lcovLines = await lcovLineParser.parsedLines(rootPath);
     final totalCodeCoverageParser = CodeCoverageFileParser(
       coverageCodeFiles: lcovLines,
-      modifiedCodeFiles: gitJsonParser != null ? await gitJsonParser.parsedLines(rootPath) : null,
+      modifiedCodeFiles: await gitJsonParser?.parsedLines(rootPath),
+      analysisCodeQualityIssues: await analysisJsonParser?.parsedLines(rootPath),
     );
     final codeFiles = await totalCodeCoverageParser.parsedLines(rootPath);
     for (var report in reportTypes) {

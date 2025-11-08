@@ -13,7 +13,9 @@
 
 include: package:lints/recommended.yaml
 
+
 formatter:
+  trailing_commas: preserve
   page_width: 300
 
 # Uncomment the following section to specify additional rules.

@@ -11,6 +11,7 @@ class ArgumentSettings {
   final bool isFlutterProject;
   final String? gitParserFile;
   final List<ReportType> reportTypes;
+  final String? analysisParserFile;
 
   ArgumentSettings({
     this.lcovFile,
@@ -20,6 +21,7 @@ class ArgumentSettings {
     this.gitParserFile,
     this.isFlutterProject = false,
     required this.reportTypes,
+    this.analysisParserFile,
   });
 
   static ArgParser _parser = ArgParser();
@@ -33,6 +35,7 @@ class ArgumentSettings {
     final rootProjectPathKey = 'projectPath';
     final gitParserFileKey = 'gitParserFile';
     final reportType = 'reportType';
+    final analysisParserFileKey = 'analysisParserFile';
 
     _parser
       ..addOption(lcovFileKey, abbr: lcovFileKey.split('').first, help: 'Path to the LCOV file')
@@ -40,7 +43,9 @@ class ArgumentSettings {
       ..addOption(outputKey, abbr: outputKey.split('').first, help: 'Path to the output directory')
       ..addOption(rootProjectPathKey, abbr: rootProjectPathKey.split('').first, help: 'Path to the project')
       ..addOption(gitParserFileKey, abbr: gitParserFileKey.split('').first, help: 'Path to the git parser file')
+      ..addOption(analysisParserFileKey, abbr: analysisParserFileKey.split('').first, help: 'Path to the analysis results file (e.g., `coverage/.analyzer.json`)')
       ..addOption(reportType, abbr: reportType.split('').first, defaultsTo: 'html', help: 'Type of report to generate (html, json, console). multiple can be passed seperated by comma')
+
       ..addOption(flutterProjectKey, abbr: flutterProjectKey.split('').first, defaultsTo: 'false', help: 'Whether or not this is a Flutter project');
 
     final results = _parser.parse(args);
@@ -54,6 +59,7 @@ class ArgumentSettings {
       isFlutterProject: results[flutterProjectKey] == 'true',
       gitParserFile: results[gitParserFileKey] as String?,
       reportTypes: ReportType.fromString(results[reportType] as String?),
+      analysisParserFile: results[analysisParserFileKey] as String?,
     );
   }
 
@@ -69,6 +75,11 @@ class ArgumentSettings {
 
   File? get gitParserJsonFile {
     if (gitParserFile != null) return File(gitParserFile!);
+    return null;
+  }
+  
+  File? get analysisResultsFile {
+    if (analysisParserFile != null) return File(analysisParserFile!);
     return null;
   }
 

@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:lcov_cli/lcov_cli.dart';
 import 'package:lcov_cli/models/code_file.dart';
 import 'package:lcov_cli/models/lcov_file_group.dart';
 import 'package:lcov_cli/models/line.dart';
@@ -14,7 +15,10 @@ import 'package:lcov_cli/parsers/line_parser.dart';
 /// It extends the LineParser class to inherit parsing behavior.
 class CodeCoverageFileParser extends LineParser {
   // List of code files that have been modified (if any).
-  final List<CodeFile>? modifiedCodeFiles;
+  final Map<String, Map<int, Line>>? modifiedCodeFiles;
+
+  // List of code files that have analysis code quality issues (if any).
+  final Map<String, Map<int, Line>>? analysisCodeQualityIssues;
 
   // List of code files containing coverage information.
   final List<CodeFile> coverageCodeFiles;
@@ -23,7 +27,8 @@ class CodeCoverageFileParser extends LineParser {
   ///
   /// [modifiedCodeFiles]: A list of files that have been modified (can be null).
   /// [coverageCodeFiles]: A list of files with code coverage data.
-  CodeCoverageFileParser({required this.modifiedCodeFiles, required this.coverageCodeFiles});
+  /// [analysisCodeQualityIssues]: A list of files with analysis code quality issues (can be null).
+  CodeCoverageFileParser({this.analysisCodeQualityIssues, this.modifiedCodeFiles, required this.coverageCodeFiles});
 
   /// Parses the lines of code in the provided coverage files and modified files (if any).
   ///
@@ -49,9 +54,6 @@ class CodeCoverageFileParser extends LineParser {
       );
     }).toList();
 
-    // Map of modified files by file path (if any modified files are provided).
-    final modifiedFilesByPath = {for (var file in modifiedCodeFiles ?? <CodeFile>[]) file.path: file};
-
     // Map of coverage files by file path.
     final coverageFilesByPath = {for (var file in coverageCodeFiles) getLcovFilePath(file.path): file};
 
@@ -63,7 +65,8 @@ class CodeCoverageFileParser extends LineParser {
       final coverageLinesByNumber = {for (var line in coverageFilesByPath[group.filePath]?.codeLines ?? <Line>[]) line.lineNumber: line};
 
       // Map modified lines by line number (if the file has been modified).
-      final modifiedLinesByNumber = {for (var line in modifiedFilesByPath[group.filePath]?.codeLines ?? <Line>[]) line.lineNumber: line};
+      final modifiedLinesByNumber = modifiedCodeFiles?[group.filePath];
+      final analysisLinesByNumber = analysisCodeQualityIssues?[group.filePath];
 
       for (var i = 0; i < group.content.length; i++) {
         final index = i + 1; // Line number (1-based index).
@@ -76,9 +79,11 @@ class CodeCoverageFileParser extends LineParser {
             canHitLine: coverageLinesByNumber[index]?.canHitLine ?? false,
             hitCount: coverageLinesByNumber[index]?.hitCount ?? 0,
             isLineHit: coverageLinesByNumber[index]?.isLineHit ?? false,
-            isModified: modifiedLinesByNumber[index]?.isModified ?? false,
+            isModified: modifiedLinesByNumber?[index]?.isModified ?? false,
+            qualityAnalysisIssues: analysisLinesByNumber?[index]?.qualityAnalysisIssues,
           ),
         );
+
       }
 
       codeFiles.add(CodeFile(path: group.filePath, codeLines: fileLines));

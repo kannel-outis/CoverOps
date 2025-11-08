@@ -15,9 +15,73 @@ include: package:lints/recommended.yaml
 
 # Uncomment the following section to specify additional rules.
 
-# linter:
-#   rules:
-#     - camel_case_types
+formatter:
+  page_width: 300
+
+linter:
+  rules:
+    # Core Lint Rules
+    - avoid_print
+    - avoid_single_cascade_in_expression_statements
+    - camel_case_types
+    - constant_identifier_names
+    - curly_braces_in_flow_control_structures
+    - directives_ordering
+    - always_use_package_imports
+    - file_names
+    - prefer_final_fields
+    - prefer_is_not_empty
+    - sort_constructors_first
+    - type_annotate_public_apis
+
+    # Flutter Specific Lint Rules
+    - avoid_redundant_argument_values
+    - avoid_unnecessary_containers
+    - avoid_web_libraries_in_flutter
+    - prefer_const_constructors
+    - prefer_const_literals_to_create_immutables
+    - prefer_final_locals
+    - sized_box_for_whitespace
+    - unnecessary_const
+    - use_key_in_widget_constructors
+
+    # Style and Convention
+    - always_declare_return_types
+    - annotate_overrides
+    - avoid_annotating_with_dynamic
+    - avoid_empty_else
+    - avoid_init_to_null
+    - avoid_return_types_on_setters
+    - avoid_unused_constructor_parameters
+    - await_only_futures
+    - empty_catches
+    - prefer_typing_uninitialized_variables
+
+    # Documentation and Comments
+    - slash_for_doc_comments
+    - comment_references
+
+    # Code Efficiency and Performance
+    - avoid_function_literals_in_foreach_calls
+    - avoid_types_on_closure_parameters
+    - prefer_collection_literals
+    - unnecessary_new
+    - unnecessary_lambdas
+    - unnecessary_getters_setters
+    - use_function_type_syntax_for_parameters
+    - prefer_spread_collections
+
+    # Error Handling
+    # - avoid_catches_without_on_clauses
+
+    # Best Practices
+    - avoid_positional_boolean_parameters
+    - use_string_buffers
+    - use_rethrow_when_possible
+
+    # Miscellaneous
+    - avoid_returning_this
+    - use_full_hex_values_for_flutter_colors
 
 # analyzer:
 #   exclude:

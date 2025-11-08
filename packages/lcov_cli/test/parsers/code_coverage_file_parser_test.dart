@@ -38,14 +38,11 @@ void main() {
 
   test('parsedLines correctly merges coverage and modified files data', () async {
     final parser = CodeCoverageFileParser(
-      modifiedCodeFiles: [
-        CodeFile(
-          path: testFile.path,
-          codeLines: [
-            Line(lineNumber: 2, lineContent: 'line2', isModified: true),
-          ],
-        ),
-      ],
+      modifiedCodeFiles: {
+        testFile.path: {
+          2: Line(lineNumber: 2, lineContent: 'line2', isModified: true),
+        }
+      },
       coverageCodeFiles: [
         CodeFile(
           path: 'test.dart',
@@ -60,6 +57,36 @@ void main() {
     final result = await parser.parsedLines(tempDir.path);
     expect(result[0].codeLines[1].isModified, isTrue);
     expect(result[0].codeLines[1].hitCount, equals(0));
+  });
+
+  test('parsedLines correctly merges coverage and quality analysis issues data', () async {
+    final parser = CodeCoverageFileParser(
+      analysisCodeQualityIssues: {
+        testFile.path: {
+          2: QualityLine(
+            lineNumber: 2,
+            message: 'Missing a catch clause',
+            type: 'error',
+            rule: 'some_rule',
+          ),
+        }
+      },
+      coverageCodeFiles: [
+        CodeFile(
+          path: 'test.dart',
+          codeLines: [
+            Line(lineNumber: 1, lineContent: 'line1', canHitLine: true, hitCount: 1),
+            Line(lineNumber: 2, lineContent: 'line2', canHitLine: true, hitCount: 0),
+          ],
+        ),
+      ],
+    );
+
+    final result = await parser.parsedLines(tempDir.path);
+    expect(result[0].codeLines[1].hasQualityIssues, isTrue);
+    expect(result[0].codeLines[1].qualityAnalysisIssues?.message, equals('Missing a catch clause'));
+    expect(result[0].codeLines[1].qualityAnalysisIssues?.type, equals('error'));
+    expect(result[0].codeLines[1].qualityAnalysisIssues?.rule, equals('some_rule'));
   });
 
   test('parsedLines handles non-existent files gracefully', () async {

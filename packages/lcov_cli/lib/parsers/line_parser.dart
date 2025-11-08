@@ -37,3 +37,20 @@ abstract class LineParser {
   /// Returns a list of [CodeFile] objects containing the parsed coverage data.
   FutureOr<List<CodeFile>> parsedLines([String? rootPath]);
 }
+
+/// A base class for parsing code coverage files with dynamic return types.
+///
+/// This abstract class provides a common interface for parsing different types of
+/// code coverage files (e.g., LCOV, JSON) and returning results of type [T].
+abstract class DynamicLineParser<T> {
+  /// Creates a new [DynamicLineParser] instance.
+  const DynamicLineParser();
+
+  /// Parses the file and returns coverage data of type [T].
+  ///
+  /// Parameters:
+  /// - [rootPath]: Optional root path to use for resolving relative file paths.
+  ///
+  /// Returns a value of type [T] containing the parsed coverage data.
+  FutureOr<T> parsedLines([String? rootPath]);
+}

@@ -23,7 +23,9 @@ void main() {
         ..addOption('config')
         ..addOption('reportType')
         ..addOption('project-dir')
-        ..addOption('report-format');
+        ..addOption('report-format')
+        ..addOption('analysisParserFile')
+        ..addOption('lang');
     });
 
     test('creates Config with null values when no args provided', () {
