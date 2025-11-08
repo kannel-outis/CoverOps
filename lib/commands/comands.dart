@@ -191,6 +191,8 @@ class LcovCliCommand extends Command<int> {
     }
   }
 }
+
+//TODO: might move
 class AnalyzerCommand extends Command<int> {
   AnalyzerCommand() {
     addArgParser();
