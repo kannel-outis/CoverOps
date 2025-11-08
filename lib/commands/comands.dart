@@ -373,7 +373,7 @@ class MainRunnerCommand extends Command<int> {
       final invoke = Future.wait([main.run(['git', ...gitOptions]), main.run(['analyze', ...analyzerOptions])]);
       await _runSafely(invoke);
       await main.run(['lcov', ...lcovOptions]);
-      Logger.success('Analysis completed successfully.'); 
+      Logger.success('Analysis completed successfully.');
       return 0;
     } catch (e) {
       Logger.error(e);
