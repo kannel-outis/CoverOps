@@ -9,7 +9,7 @@ class AnalysisCLIHelpers {
   static const languageKey = 'lang';
   static const configFileKey = 'config';
   
-  static Map<String, Map<String, dynamic>> generateAnalysisMap(List<AnalysisFile> analysisFiles) {
+  static Map<String, Map<String, dynamic>> generateAnalysisMap(List<AnalysisFile> analysisFiles, String rootPath) {
     final Map<String, Map<String, dynamic>> analysisMap = {};
     for (var file in analysisFiles) {
       final lines = <String, dynamic>{};
@@ -19,7 +19,7 @@ class AnalysisCLIHelpers {
           return _mergeLineMaps(existing, line.toJson());
         }, ifAbsent: line.toJson);
       }
-      analysisMap[file.path] = lines;
+      analysisMap['$rootPath/${file.path}'] = lines;
     }
     return analysisMap;
   }

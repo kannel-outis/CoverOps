@@ -30,7 +30,7 @@ class SyntaxDecorator {
   /// 4. Preserving unmatched content with default styling
   String applyRules() {
     final buffer = StringBuffer();
-    final styledSpans = <_StyledSpan>[];
+    final styledSpans = <_StyledSpan>[]; //TODO: return list of _StyledSpan
 
     final matchedPositions = List<bool>.filled(content.length, false);
 
@@ -56,6 +56,7 @@ class SyntaxDecorator {
             match.start,
             match.end,
             SpanTag(attributes: {'class': rule.name}, content: cleanContent(match.group(0)!)).build(),
+            cleanContent(match.group(0)!),
           ),
         );
       }
@@ -71,7 +72,7 @@ class SyntaxDecorator {
           SpanTag(attributes: {'class': 'default-style'}, content: cleanContent(unmatched)).build(),
         );
       }
-      buffer.write(span.content);
+      buffer.write(span.htmlContent);
       currentIndex = span.end;
     }
 
@@ -96,10 +97,13 @@ class _StyledSpan {
   final int end;
 
   /// The styled HTML content for this span.
-  final String content;
+  final String htmlContent;
+
+  /// The raw content for this span.
+  final String rawContent;
 
   /// Creates a new [_StyledSpan] instance.
-  _StyledSpan(this.start, this.end, this.content);
+  _StyledSpan(this.start, this.end, this.htmlContent, this.rawContent);
 }
 
 /// A decorator class for applying syntax highlighting to test code lines.

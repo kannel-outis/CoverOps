@@ -28,7 +28,7 @@ class AnalysisParserCli {
     final Parser parser = AnalysisParser(config: config);
 
     final files = await parser.parse();
-    final results = AnalysisCLIHelpers.generateAnalysisMap(files);
+    final results = AnalysisCLIHelpers.generateAnalysisMap(files, workingDirectory);
     final result = await AnalysisCLIHelpers.writeAnalysisMapToJson(results, '$outputDirectory/.analysis.json');
     print(result);
     print(files.length);
